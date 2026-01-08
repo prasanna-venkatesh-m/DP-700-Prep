@@ -1,0 +1,94 @@
+# DP-700 Spark Workspace Settings – Cheat Sheet
+
+A concise reference for **Azure Synapse / Fabric Spark workspace settings**, optimized for **DP-700 exam revision**.
+
+---
+
+## 1. Spark Workspace Settings (Workspace-wide)
+
+- Applies to **all notebooks and users** in the workspace
+- Controls default Spark configurations:
+  - Executor memory and cores
+  - Shuffle partitions (`spark.sql.shuffle.partitions`)
+  - Other Spark properties
+- **Use case:** Enforce consistent Spark behavior across teams
+- **Exam tip:** Keywords like *“default for all notebooks”* → **Workspace settings**
+
+---
+
+## 2. Spark Environments
+
+- Defines the runtime environment:
+  - Python version
+  - Pre-installed libraries (`.whl`, PyPI packages)
+- Scope: **Workspace-wide**
+- Changes **require restarting Spark sessions**
+- **Use case:** Ensure consistent libraries and runtime across notebooks
+- **Exam tip:** *“Same libraries for all notebooks”* → **Spark environment**
+
+---
+
+## 3. Auto-Termination
+
+- Automatically stops **idle Spark sessions** after a timeout
+- Benefits:
+  - Frees capacity
+  - Reduces cost
+- Can apply **workspace-wide or per session**
+- **Exam tip:** *“Reduce cost by stopping idle sessions”* → **Auto-termination**
+
+---
+
+## 4. Dynamic Resource Allocation
+
+- Automatically adjusts executor count:
+  - Scales up under heavy load
+  - Scales down when idle
+- Optimizes **performance and cost**
+- Does **not** provide workload isolation
+- **Exam tip:** Focuses on *scaling*, not *isolation*
+
+---
+
+## 5. Spark Session Reuse
+
+- Reuses existing Spark sessions across notebooks
+- Reduces **startup latency**
+- Improves interactive performance
+- **Exam tip:** *“Reduce startup time”* → **Session reuse**
+
+---
+
+## 6. Spark Session Isolation
+
+- Provides **separate Spark sessions per user or workload**
+- Prevents resource contention
+- Ensures predictable performance
+- **Exam tip:** *“Workload isolation”*, *“predictable performance”* → **Session isolation**
+
+---
+
+## 7. Notebook-level Spark Configurations
+
+- Overrides workspace defaults **for a single notebook**
+- Used when specific workloads need custom settings
+- Scope: **Notebook only**
+- **Exam tip:** *“Custom config for one notebook”* → **Notebook-level config**
+
+---
+
+## 8. Exam Traps & Quick Mapping
+
+| Scenario                                         | Correct Setting              |
+|--------------------------------------------------|------------------------------|
+| Default for all notebooks                         | Spark workspace settings     |
+| Reduce Spark startup time                         | Spark session reuse          |
+| Same libraries for all notebooks                  | Spark environment            |
+| Stop idle Spark sessions                          | Auto-termination             |
+| Prevent workload interference                    | Spark session isolation      |
+| Custom Spark config for one notebook              | Notebook-level Spark config  |
+
+---
+
+## Memory Model (Scope Layers)
+
