@@ -1,0 +1,131 @@
+# DP-700 Cheat Sheet
+## Configure Domain Workspace Settings
+
+Concise reference for DP-700: Implement and Manage an Analytics Solution  
+Focus area: Domain Workspace Configuration
+
+---
+
+## 1. Domain Workspace Roles and Permissions
+
+Controls who can access the domain and what actions they can perform.
+
+### Capabilities
+- Create and delete Spark pools
+- Run notebooks
+- Manage domain resources
+
+### Exam Traps
+- Does NOT enforce row-level security (RLS)
+- Does NOT restrict external data sources
+
+**Scenario**  
+Limit Spark pool creation to senior analysts while allowing others to run jobs.
+
+---
+
+## 2. Domain-Level Data Access Policies
+
+Enforces data security policies across the domain.
+
+### Capabilities
+- Automatically enforces row-level security (RLS)
+- Applies to all Spark sessions in the domain
+
+### Exam Traps
+- Controls data access, not compute or storage
+- Must be combined with roles and permissions for full security
+
+**Scenario**  
+Restrict HR, payroll, or financial data based on user or group.
+
+---
+
+## 3. Domain Workspace Default Resources
+
+Defines baseline compute and storage resources per domain.
+
+### Capabilities
+- Sets default Spark cores and memory
+- Prevents excessive resource usage
+- Users can request larger clusters, but defaults apply
+
+### Exam Traps
+- Does NOT enforce security or access policies
+- Does NOT stop idle Spark sessions
+
+**Scenario**  
+Finance domain default: 4 cores, 16 GB RAM.
+
+---
+
+## 4. Domain Workspace Allowed Connections
+
+Restricts which external data sources can be used.
+
+### Capabilities
+- Limits connectors to approved sources
+- Improves governance and compliance
+
+### Exam Traps
+- Does NOT manage user permissions
+- Does NOT enforce row-level security
+
+**Scenario**  
+Marketing domain allowed connections limited to approved SQL warehouse and data lake sources.
+
+---
+
+## 5. Auto-Termination
+
+Automatically stops idle Spark sessions.
+
+### Capabilities
+- Frees unused compute resources
+- Helps reduce cost
+
+### Exam Trap
+- Does NOT enforce compute limits or security
+
+---
+
+## 6. Domain-Level vs Notebook-Level Configuration
+
+| Setting Type                       | Scope            | Purpose                                     |
+|-----------------------------------|------------------|---------------------------------------------|
+| Domain workspace roles            | Domain           | User permissions and Spark pool management  |
+| Domain data access policies       | Domain           | Row-level security                          |
+| Domain default resources          | Domain           | Baseline compute and storage                |
+| Allowed connections               | Domain           | Restrict external data sources              |
+| Auto-termination                  | Domain / Session | Stop idle Spark sessions                    |
+| Notebook Spark configuration      | Notebook         | Override Spark settings per notebook        |
+| Spark environment                 | Workspace        | Libraries and runtime for all notebooks     |
+
+---
+
+## 7. Exam Keywords Mapping
+
+| Requirement in Question                | Correct Feature                   |
+|--------------------------------------|-----------------------------------|
+| Automatically enforce RLS            | Domain data access policies       |
+| Limit compute or storage             | Domain default resources          |
+| Prevent Spark pool creation          | Roles and permissions             |
+| Restrict external data sources       | Allowed connections               |
+| Stop idle sessions to reduce cost    | Auto-termination                  |
+
+---
+
+## 8. Quick Memory Map
+
+Domain Workspace  
+- Roles and Permissions: who can manage resources  
+- Default Resources: compute and storage baseline  
+- Allowed Connections: approved data sources  
+- Data Access Policies: row-level security  
+- Auto-Termination: idle session cleanup
+
+---
+
+Exam Tip:  
+Domain settings = policy and baseline  
+Notebook settings = temporary overrides
