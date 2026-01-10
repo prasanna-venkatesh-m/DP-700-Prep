@@ -1,0 +1,127 @@
+# 🧠 OneLake Workspace Settings – DP-700 Cheat Sheet
+
+## 1️⃣ What is OneLake (Exam Definition)
+**OneLake** is Microsoft Fabric’s **single, unified data lake** that:  
+- Stores all Fabric data (Delta/Parquet)  
+- Is automatically provisioned per tenant  
+- Uses a **logical hierarchy** instead of physical storage management  
+
+📌 **Key idea:**  
+> Users manage **access and behavior**, not physical storage.
+
+---
+
+## 2️⃣ Governance & Scope Hierarchy (VERY IMPORTANT)
+Tenant (Highest) ↓ Domain ↓ Workspace (Lowest)
+
+### Rules:
+- Higher levels **override** lower levels  
+- Workspace settings **cannot bypass** Domain or Tenant restrictions  
+- Lower levels can be **more restrictive**, but never less  
+
+📌 **Exam trap:**  
+> Workspace ≠ override
+
+---
+
+## 3️⃣ OneLake Workspace Settings – What You Can Configure
+
+### Core Workspace-Level Controls
+| Setting | Purpose |
+|---------|---------|
+| Enable/disable OneLake shortcuts | Allow or block shortcut creation |
+| Restrict shortcuts to internal OneLake | Block external ADLS / S3 |
+| Control data access patterns | Standardize how users consume data |
+| Workspace-specific governance | Exceptions to domain-wide defaults |
+
+✔ Applied **only to that workspace**
+
+---
+
+## 4️⃣ What You *Cannot* Configure (Common Exam Trap)
+❌ Physical storage location  
+❌ Data replication across regions  
+❌ Underlying infrastructure  
+❌ Storage account type  
+
+📌 **Fabric abstracts infrastructure**
+
+---
+
+## 5️⃣ Domains vs Workspaces vs Tenant – Comparison
+| Scope | Best Use Case | Exam Keywords |
+|-------|---------------|---------------|
+| **Tenant** | Global governance | “All workspaces”, “Organization-wide” |
+| **Domain** | Business-unit governance | “Standardization”, “Central control” |
+| **Workspace** | Local control | “Specific team”, “Exception” |
+
+📌 **Rule of thumb:**  
+> If question mentions **scale or consistency** → Domain  
+> If mentions **specific workspace** → Workspace
+
+---
+
+## 6️⃣ OneLake Shortcuts – Exam-Relevant Details
+
+### Shortcut Types
+- ✔ OneLake internal shortcuts  
+- ✔ External shortcuts (ADLS Gen2, Amazon S3) — **if allowed**
+
+### Shortcut Governance
+- Controlled by **Tenant / Domain / Workspace settings**  
+- NOT controlled by user permissions alone  
+
+📌 **Exam trap:**  
+> Contributor role ≠ shortcut permission
+
+---
+
+## 7️⃣ Common DP-700 Exam Traps & How to Beat Them
+
+### 🚨 Trap 1: “Override” Language
+> “Workspace overrides Domain” ❌ False  
+✔ Higher level always wins
+
+### 🚨 Trap 2: Permissions vs Governance
+> “Remove Contributor role to block shortcuts” ❌ Incorrect  
+✔ Use OneLake settings instead
+
+### 🚨 Trap 3: Infrastructure Control
+> “Choose storage region” ❌ Not configurable  
+✔ Fabric manages this automatically
+
+### 🚨 Trap 4: Wrong Scope
+> “Apply to only one workspace → Tenant setting” ❌ Overkill  
+✔ Use workspace settings
+
+---
+
+## 8️⃣ Exam Keywords to Watch For
+| Keyword | Meaning |
+|---------|---------|
+| Govern centrally | Domain or Tenant |
+| Specific workspace | Workspace |
+| Consistent behavior | Domain |
+| Restrict external access | OneLake shortcut settings |
+| Minimal admin effort | Domain |
+
+---
+
+## 9️⃣ Visual Summary (Mental Diagram)
+User ↓ Workspace OneLake Settings ↓ Domain Policies ↓ Tenant Fabric Settings ↓ OneLake (Unified Storage – Abstracted)
+
+---
+
+## 10️⃣ Final Exam Tip 🎯
+> If the question mentions:  
+> - **Who wins?** → Higher scope  
+> - **Where to configure?** → Smallest scope that meets requirement  
+> - **Physical storage?** → Not configurable
+
+---
+
+If you want next:  
+- 🔥 **Hard DP-700 mock questions**  
+- 🔁 **Quick 10-question rapid drill**  
+- 🧩 **Compare OneLake vs ADLS Gen2 for exam**  
+- 📝 **Notebook + OneLake interaction questions**
