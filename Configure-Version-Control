@@ -1,0 +1,181 @@
+TextCell[
+"
+🧠 DP-700 CHEAT SHEET
+
+Configure Version Control in Microsoft Fabric
+
+---
+
+1️⃣ Key Concepts (Must-Know)
+
+What “Version Control” Means in Fabric
+
+- Uses Git integration (Azure DevOps or GitHub)
+- Tracks changes to Fabric items as files in a Git repo
+- Enables:
+  - Collaboration
+  - Change history
+  - Rollback
+  - Branch-based development (managed outside Fabric)
+
+Golden rule (exam):
+
+Git = source control
+Deployment pipelines = environment promotion
+
+---
+
+2️⃣ Supported Items (Very Exam-Relevant)
+
+Fabric Item          | Git Supported
+-------------------- | -------------
+Notebooks            | ✅
+Lakehouses           | ✅
+Semantic models      | ✅
+Reports              | ✅
+Data pipelines       | ✅
+Dashboards           | ❌
+Deployment pipelines | ❌
+
+Exam trap: Dashboards are not Git-enabled
+
+---
+
+3️⃣ Configuration & Settings
+
+Where Git Integration Is Configured
+
+Scope: Workspace level ✅
+
+Steps:
+
+1. Workspace → Settings
+2. Enable Git integration
+3. Connect to:
+   - Azure DevOps OR
+   - GitHub
+4. Select:
+   - Repository
+   - Branch
+   - Folder
+
+Not configurable at:
+
+- Domain level ❌
+- Notebook level ❌
+
+---
+
+4️⃣ How Git Integration Works
+
+Sync Model (Important)
+
+- Git is the source of truth
+- Two main actions:
+  - Commit → Workspace ➜ Git
+  - Update / Sync → Git ➜ Workspace
+
+Danger (exam favorite):
+
+Pulling from Git can overwrite workspace artifacts
+
+---
+
+5️⃣ What Fabric CAN and CANNOT Do
+
+Fabric CAN:
+
+- Commit workspace changes
+- Pull latest changes from Git
+- Track artifact metadata
+
+Fabric CANNOT:
+
+- Create or switch Git branches
+- Resolve merge conflicts
+- Auto-merge changes
+- Enforce PR policies
+
+All of the above must be done in GitHub / Azure DevOps
+
+---
+
+6️⃣ Git vs Deployment Pipelines (High-Yield Table)
+
+Feature                 | Git Integration | Deployment Pipelines
+----------------------- | --------------- | --------------------
+Version history         | ✅               | ❌
+Branching               | ✅ (external)    | ❌
+Pull requests           | ✅               | ❌
+Dev/Test/Prod promotion | ❌               | ✅
+Safe production release | ❌               | ✅
+
+Best Practice (exam answer):
+
+Use Git for development + pipelines for promotion
+
+---
+
+7️⃣ Common Exam Traps & How to Beat Them
+
+Trap 1: “Pipelines provide version control”
+➡️ Pipelines do NOT track history
+
+Trap 2: “Fabric manages Git branches”
+➡️ Branching is external only
+
+Trap 3: “Semantic models aren’t Git-enabled”
+➡️ They are (metadata-based)
+
+Trap 4: “Git sync merges changes”
+➡️ It overwrites, no auto-merge
+
+---
+
+8️⃣ Typical Exam Scenarios & Correct Answers
+
+Scenario                 | Correct Tool
+------------------------ | --------------------
+Developers collaborating | Git integration
+Need rollback capability | Git integration
+Promote Dev ➜ Prod       | Deployment pipelines
+Avoid overwriting Prod   | Pipelines + Git
+Track notebook changes   | Git
+
+---
+
+9️⃣ Visual Summary (Mental Diagram)
+
+        ┌─────────────┐
+        │   Git Repo  │
+        │ (Source of  │
+        │   Truth)    │
+        └─────▲───────┘
+              │ Sync / Commit
+              │
+      ┌───────┴────────┐
+      │  Dev Workspace │
+      │  (Git-linked)  │
+      └───────▲────────┘
+              │ Deploy
+              │
+      ┌───────┴────────┐
+      │ Test Workspace │
+      └───────▲────────┘
+              │ Deploy
+              │
+      ┌───────┴────────┐
+      │ Prod Workspace │
+      └────────────────┘
+
+---
+
+🧠 Final Exam Memory Hooks
+
+- Workspace-level Git
+- Git ≠ Pipelines
+- Git overwrites
+- No branch management in Fabric
+- Semantic models ARE tracked
+",
+ "Text"]
