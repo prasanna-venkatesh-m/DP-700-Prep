@@ -1,0 +1,183 @@
+TextCell[
+"
+🧠 DP-700 Cheat Sheet
+
+Configure Data Workflow Workspace Settings (Microsoft Fabric)
+
+---
+
+1️⃣ Key Concepts (Must Know)
+
+Hierarchy & Scope (VERY IMPORTANT)
+
+Tenant
+ └── Domain
+      └── Workspace
+           └── Item (Notebook / Pipeline / Lakehouse / Dataflow)
+
+Higher levels override lower levels
+
+Level         | Purpose
+------------- | ----------------------------
+Tenant        | Global Fabric enablement
+Domain        | Governance & standardization
+Workspace     | Collaboration & execution
+Item          | Development details
+
+Exam rule:
+If something is blocked despite correct workspace settings, check Domain first
+
+---
+
+2️⃣ Workspace Settings – What You Can Configure
+
+Core Workspace Settings
+
+Enable/disable:
+- Lakehouses
+- Notebooks
+- Data Pipelines
+- Dataflows Gen2
+
+- Git integration
+- Deployment pipelines
+- Capacity assignment
+- Workspace roles (Admin, Member, Contributor, Viewer)
+
+Capacity Settings (Performance)
+
+- Assign Fabric capacity (F2, F4, F8, …)
+- Affects:
+  - Notebook execution
+  - Pipeline scheduling
+  - Concurrency
+  - Pausing behavior
+
+Performance tuning = capacity size + concurrency control
+
+Security & Governance
+
+- Private endpoints (network security)
+- Managed identities (item-level)
+- Role-based access control (RBAC)
+
+---
+
+3️⃣ Domain Settings (Exam Favorite)
+
+What Domains Control
+
+- Who can:
+  - Create workspaces
+  - Create Lakehouses / Pipelines / Notebooks
+- Isolation rules
+- Governance policies
+- Default workspace behavior
+
+Why Domains Matter
+
+- Apply across multiple workspaces
+- Reduce admin effort
+- Enforce consistent rules
+
+Exam tip:
+Enterprise-wide restriction → Domain, not Workspace
+
+---
+
+4️⃣ Roles & Permissions (Tricky Table)
+
+Role            | Can Run | Can Modify | Can Create Items
+--------------- | ------- | ---------- | ----------------
+Viewer          | ❌      | ❌         | ❌
+Member          | ✅      | ❌         | ❌
+Contributor     | ✅      | ✅         | ✅
+Admin           | ✅      | ✅         | ✅
+
+Most tested trap:
+Member ≠ Contributor
+
+---
+
+5️⃣ Git Integration & DevOps Flow
+
+Required Order (Memorize)
+
+Workspace
+ → Enable Git Integration
+   → Connect Repo
+     → Branching & PRs
+       → Deployment Pipelines (optional)
+
+What Git Tracks
+
+- Notebooks
+- Pipelines
+- Lakehouse metadata
+- SQL objects
+
+Git is a workspace-level setting
+
+---
+
+6️⃣ Common Exam Traps 🚨
+
+Trap 1: “Users have permissions but still can’t create items”
+Answer: Domain restriction
+
+Trap 2: “Notebooks pause or run slowly”
+Answer:
+- Increase capacity
+- Reduce concurrency
+NOT networking or security settings
+
+Trap 3: “Restrict creation across many workspaces”
+Answer: Domain settings
+NOT workspace-by-workspace
+
+Trap 4: “Let users run but not create”
+Answer: Member role
+
+---
+
+7️⃣ Visual Summary (Quick Revision)
+
+            Tenant
+               │
+        ┌──────▼──────┐
+        │   Domain     │  ← Governance, creation rules
+        └──────┬──────┘
+               │
+        ┌──────▼──────┐
+        │ Workspace    │  ← Capacity, Git, roles
+        └──────┬──────┘
+               │
+ ┌─────────────▼─────────────┐
+ │ Notebook | Pipeline | LH   │ ← Execution only
+ └───────────────────────────┘
+
+Override direction: Higher level wins
+
+---
+
+8️⃣ Last-Minute Exam Tips 📝
+
+- Read for scope keywords:
+  - “Across workspaces” → Domain
+  - “Performance” → Capacity
+  - “Version control” → Git
+- If two answers seem right, pick the one with:
+  - Wider scope
+  - Less admin effort
+- Expect multi-select with 2 correct answers
+
+---
+
+✅ You’re Exam-Ready for This Topic
+
+Next steps could include:
+- Harder DP-700 case studies
+- Full DP-700 mini exam
+- Next objective: Lakehouse governance, pipelines, or security
+",
+ "Text"]
