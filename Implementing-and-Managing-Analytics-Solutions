@@ -1,0 +1,97 @@
+TextCell[
+"
+📘 DP-700 Cheat Sheet
+
+Implementing and Managing Analytics Solutions in Fabric – Lifecycle Management & Deployment Pipelines
+
+---
+
+1️⃣ Key Concepts
+
+Concept                              | Description                                                                                                      | Exam Tip / Trap
+------------------------------------ | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------
+Deployment Pipeline                  | A controlled process to promote Fabric artifacts (reports, semantic models, Dataflows Gen2) from Dev → Test → Prod. | Only metadata moves; lakehouse data is not deployed.
+Workspaces                           | Logical containers for Fabric artifacts.                                                                         | Roles determine promotion and edit rights; Dev = contributors, Test/Prod = viewers/admins.
+Roles in Workspaces                   | Admin, Contributor, Member, Viewer                                                                                | Admin can manage roles and artifacts; Contributor can edit in Dev; Viewer cannot edit.
+Artifacts supported in Pipelines      | Reports, Semantic models, Dataflows Gen2                                                                         | Dashboards & Notebooks not supported.
+Artifact scope                        | Workspace scope: deployment happens at workspace level. Notebook scope: Not deployable. Domain/organization: Pipelines don’t enforce cross-domain rules. | Never assume notebooks or dashboards deploy automatically.
+Git Integration                        | Optional; enables version control and collaboration in Dev workspace.                                           | Git does not lock Test/Prod—workspace roles do that.
+
+---
+
+2️⃣ Configurations / Settings for Pipelines
+
+Steps to implement a pipeline:
+
+1. Create Pipeline in the Development workspace
+   - Assign stages: Development → Test → Production
+2. Select content to deploy
+   - Reports, semantic models, Dataflows Gen2
+3. Set workspace roles
+   - Dev → Contributors
+   - Test/Prod → Viewers or Members (edit limited)
+4. Deploy / Promote content
+   - Promotes metadata between stages
+   - Lakehouse data must be copied separately
+5. Optional Git Integration
+   - Enables version tracking, branch management, rollback
+   - Only affects Dev; does not prevent edits in Test/Prod
+
+---
+
+3️⃣ Scope Overview
+
+Scope         | What is affected                              | Notes
+------------- | --------------------------------------------- | ---------------------------------------------------------------------------------
+Workspace     | Pipelines deploy artifacts workspace-wide     | Test/Prod workspace roles control who can edit
+Notebook      | Individual notebooks                          | Not deployable; manual promotion only
+Domain        | Organizational or tenant level                | Pipelines do not enforce domain rules; cross-tenant deployments not supported
+
+---
+
+4️⃣ Exam Traps & Tips
+
+Trap / Tip                 | Explanation
+-------------------------- | ----------------------------------------------------------------------------------------------------------------
+Data vs Metadata           | Pipelines move metadata, not actual lakehouse data. Data must be loaded manually or via ETL.
+Notebooks / Dashboards     | Often incorrectly assumed deployable. Only Reports, Semantic Models, Dataflows Gen2 are supported.
+Roles vs Git               | Git integration does not replace workspace role restrictions. Test/Prod must be locked using roles.
+Workspace naming           | Exam may try to confuse Dev/Test/Prod stages; the key is role assignment + promotion order, not names.
+Promotion order            | Always Dev → Test → Prod. Attempting Prod → Test is invalid.
+
+---
+
+5️⃣ Visual Summary / Diagram
+
+[Development Workspace] 
+   Roles: Contributors, Admins
+   Artifacts: Reports, Semantic Models, Dataflows
+         |
+         v
+[Deployment Pipeline] (metadata promotion)
+         |
+         v
+[Test Workspace]
+   Roles: Viewers, Admins
+   Artifacts: Promoted metadata only
+         |
+         v
+[Production Workspace]
+   Roles: Viewers, Admins
+   Artifacts: Final approved version
+
+Notes on Diagram:
+
+- Only metadata moves; data must be loaded separately.
+- Git integration → only affects Dev workspace.
+- Notebooks/dashboards require manual deployment.
+
+---
+
+✅ Quick Memory Hooks for Exam
+
+- “MDL” = Metadata, Deployment, Lifecycle → Pipelines move metadata and enforce lifecycle.
+- Roles rule → Dev = edit, Test/Prod = read-only.
+- Supported items only → Reports, Semantic Models, Dataflows.
+",
+ "Text"]
