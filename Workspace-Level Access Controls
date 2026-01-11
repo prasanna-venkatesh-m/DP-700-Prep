@@ -1,0 +1,115 @@
+DP-700 – Implement Workspace-Level Access Controls (Cheat Sheet)
+
+1. Core Concept
+The workspace is the primary security boundary in Microsoft Fabric.
+Everything inside the workspace (Lakehouses, Notebooks, Pipelines, Warehouses, etc.) inherits workspace permissions unless item-level permissions are explicitly applied.
+
+2. Workspace Roles
+
+Role Comparison:
+Role       | Create/Edit Items | Run Analytics | Manage Access | Delete Workspace
+Admin      | Yes              | Yes           | Yes           | Yes
+Member     | Yes              | Yes           | Yes           | No
+Contributor| Yes              | Yes           | No            | No
+Viewer     | No               | Yes           | No            | No
+
+3. Role Definitions
+
+Admin:
+- Full control of the workspace
+- Manage access (users & roles)
+- Configure workspace settings
+- Delete the workspace
+Note: Use sparingly (exam expects least privilege)
+
+Member:
+- Full authoring capabilities
+- Can share the workspace
+- Can assign roles
+- Cannot delete workspace
+Trap: Members CAN manage access
+
+Contributor:
+- Create, edit, delete, publish items
+- Access all data in the workspace
+- Cannot manage access
+Best role for engineers
+
+Viewer:
+- View all items
+- Run notebooks, pipelines, SQL queries
+- Read-only access
+- No authoring
+BIG TRAP: Viewer CAN run analytics
+
+4. What Each Role Can Actually DO
+
+Action          | Admin | Member | Contributor | Viewer
+Create Notebook | Yes   | Yes    | Yes         | No
+Edit Lakehouse  | Yes   | Yes    | Yes         | No
+Run Notebook    | Yes   | Yes    | Yes         | Yes
+Query Data      | Yes   | Yes    | Yes         | Yes
+Share Workspace | Yes   | Yes    | No          | No
+
+5. Scope of Permissions
+
+Scope             | Description
+Tenant / Domain   | Org-wide governance
+Workspace         | Main security boundary
+Item-level        | Exception-based permissions
+Notebook          | Inherits workspace access
+
+Exam rule: Secure at workspace level first, refine later if needed.
+
+6. Governance Best Practices
+
+Least Privilege Model:
+- Engineers → Contributor
+- Business users → Viewer
+- Workspace owners → Admin (fewest possible)
+
+7. Common Exam Traps
+
+Wrong Assumptions:
+- Viewer cannot run notebooks ❌
+- Member cannot manage access ❌
+- Contributor has limited data access ❌
+- Admin needed for publishing ❌
+
+Correct Thinking:
+- Viewer = run + read
+- Contributor = edit content, no governance
+- Member = edit + governance
+- Admin = ownership
+
+8. Scenario Decision Guide
+
+Need to run analytics only? → Viewer
+Need to build/edit content? → Contributor
+Need to share workspace? → Member
+Need full ownership? → Admin
+
+9. Visual Summary
+
+          ┌────────────┐
+          │   Admin    │
+          │ Governance │
+          └─────┬──────┘
+               │
+    ┌──────────┴──────────┐
+    │                     │
+ ┌──▼─────┐           ┌───▼──────┐
+ │ Member │           │Contributor│
+ │ Edit + │           │ Edit only │
+ │ Access │           └────┬─────┘
+ └──┬─────┘                │
+    └───────────┬──────────┘
+                │
+          ┌─────▼─────┐
+          │  Viewer   │
+          │ Run only  │
+          └───────────┘
+
+10. One-Line Exam Memory Trick
+
+“Contributor builds, Member shares, Admin owns, Viewer runs.”
