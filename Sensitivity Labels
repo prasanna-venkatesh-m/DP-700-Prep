@@ -1,0 +1,119 @@
+Absolutely! Here’s a comprehensive cheat sheet for “Apply Sensitivity Labels in Power BI” tailored for DP-700. I’ve organized it for fast exam revision, with key concepts, configurations, scope, exam traps, and a visual summary.
+
+DP-700 Cheat Sheet: Sensitivity Labels in Power BI
+
+1. Key Concepts
+
+Sensitivity Labels: Tags that classify data by sensitivity (e.g., Public, Internal, Confidential, Highly Confidential).
+Purpose: Protect data, enforce governance policies, prevent unauthorized sharing/export.
+Integration: Part of Microsoft Information Protection (MIP); integrated with Power BI, Office apps, OneDrive, SharePoint.
+Propagation:
+- Dataset → Reports → Dashboards
+- Workspace → All content inside workspace
+Policy Enforcement: Enforced via MIP policies; may include:
+- Prevent export (Excel, CSV, PDF)
+- Restrict copy/paste
+- Encrypt content
+- Require label assignment before publishing
+
+2. Where Labels Can Be Applied
+
+Scope: Dataset
+Can Apply Label: Yes
+Notes: Propagates to reports & dashboards unless manually overridden.
+
+Scope: Report
+Can Apply Label: Yes
+Notes: Manual labels override inherited labels from dataset.
+
+Scope: Dashboard
+Can Apply Label: Yes
+Notes: Inherits from datasets used in visuals.
+
+Scope: Workspace
+Can Apply Label: Yes
+Notes: Applies to all content in workspace; dataset-level labels override workspace labels.
+
+Scope: Notebook (Synapse)
+Can Apply Label: Limited
+Notes: Cannot apply directly; rely on dataset/workspace labels.
+
+3. Label Enforcement Behaviors
+
+Behavior: Visual marking (header/banner)
+Applies: Yes
+Notes: Some labels are visual-only; no restriction unless MIP policy enabled.
+
+Behavior: Prevent export (Excel, CSV, PDF)
+Applies: Yes
+Notes: Only if MIP policies are configured.
+
+Behavior: Encryption
+Applies: Yes
+Notes: Only if policy specifies encryption.
+
+Behavior: Propagation to downstream reports
+Applies: Yes
+Notes: Dataset label propagates unless report has manual label.
+
+Behavior: Propagation to upstream datasets
+Applies: No
+Notes: Report label does NOT affect dataset.
+
+Behavior: Enforcement of access/viewing
+Applies: No
+Notes: Labels do not block access; they govern sharing/export.
+
+4. Integration with Microsoft 365 Compliance Center
+
+Creation: Labels are created and configured in M365 Compliance Center, not Power BI.
+Publishing: Labels can be published to Power BI after creation.
+Required Label Policy: Admins can enforce that a label must be applied before publishing content.
+MIP Policies Control Enforcement: Prevent export, require encryption, restrict external sharing.
+
+5. Exam Traps & Tips
+
+Inheritance Confusion:
+- Dataset → Report/Dashboard = automatic if report has no manual label
+- Report → Dataset = does not propagate upstream
+
+Workspace vs Dataset Label:
+- Workspace label applies to all content.
+- Dataset label overrides workspace label for that dataset.
+
+Visual-only labels:
+- Some labels just display a banner.
+- Check wording: “enforces restrictions” vs “marks as sensitive.”
+
+Export & Sharing Restrictions:
+- Labels only enforce restrictions if MIP policy configured.
+- Cannot bypass by Power BI Desktop or new datasets.
+
+Scope Misunderstanding:
+- Notebooks: Labels cannot be applied directly in Power BI; focus on datasets/workspaces.
+
+6. Quick Visual Summary
+
+[Workspace Label]
+        |
+---------------------------------------
+|                 |                   |
+[Dataset 1]     [Dataset 2]        [Dataset 3]
+     |               |                   |
+[Report A]      [Report B]         [Report C]
+     |               |                   |
+[Dashboard A]  [Dashboard B]     [Dashboard C]
+
+Rules:
+- Workspace label applies to all unless dataset label exists.
+- Dataset label propagates to reports/dashboards unless manually overridden.
+- Report label overrides inherited dataset label.
+- Policies enforce export/sharing, not viewing.
+
+7. Quick Exam Mnemonics
+
+DSD → Dataset → Report → Dashboard (propagation direction)
+Workspace Wins Nothing → Dataset labels override workspace labels
+Visual vs Policy → Visual-only labels are not enforcement; policies required for restrictions
+
+This cheat sheet covers everything you need for DP-700 on sensitivity labels: scope, propagation, enforcement, M365 integration, and traps.
