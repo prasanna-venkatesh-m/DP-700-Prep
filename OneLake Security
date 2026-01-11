@@ -1,0 +1,107 @@
+Absolutely! Let’s create a **comprehensive cheat sheet for OneLake security** for the DP-700 exam, focused on **Configure and implement OneLake security** under **analytics solutions**. I’ll organize it for quick revision and exam-readiness.
+
+---
+
+## **OneLake Security Cheat Sheet (DP-700)**
+
+---
+
+### **1️⃣ Key Concepts**
+
+| Concept                         | Description                                                                                  | Notes/Exam Tip                                                                     |
+| ------------------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| **OneLake**                     | Microsoft Fabric’s unified data lake. Stores data in **domains** and **containers**.         | Think of it as “Fabric’s domain-level data storage”.                               |
+| **Domain-level security**       | Security defined **at the container or domain level**. Controls **who can read/write** data. | Always prefer domain-level ACLs for sensitive datasets.                            |
+| **Workspace-level security**    | Security applied **inside a Fabric workspace**, e.g., notebooks, pipelines.                  | Cannot override domain-level ACLs. Useful for collaboration on non-sensitive data. |
+| **ACLs (Access Control Lists)** | Permissions to **read/write/manage** data. Applied to **groups or users**.                   | Always grant minimum required permissions.                                         |
+| **Audit Logging**               | Tracks **who accessed what and when**. Required for compliance scenarios.                    | Must enable at **domain/container level**.                                         |
+| **Row-Level Security (RLS)**    | Restricts **rows visible to users** within a table.                                          | Not a substitute for container-level security.                                     |
+| **Default Domain Permissions**  | Preconfigured access granted to **all users**.                                               | **Dangerous for sensitive data**; rarely used in exams.                            |
+
+---
+
+### **2️⃣ Configuration & Settings**
+
+**A. Domain-Level ACLs**
+
+* **Steps:**
+
+  1. Go to **OneLake → Domains → Container**.
+  2. Select **Permissions/Access Control**.
+  3. Add **Azure AD groups or users**.
+
+     * **Read** → Can query data only.
+     * **Write** → Can update/insert/delete.
+     * **Manage** → Can change ACLs.
+* **Tip:** Use **groups, not individual users**, for scalable security.
+
+**B. Audit Logging**
+
+* Enable **at container level** in OneLake.
+* Monitors:
+
+  * Data read/write events
+  * User identity
+  * Timestamp
+* Required for **compliance-heavy data**.
+
+**C. Row-Level Security (RLS)**
+
+* Configure in **Fabric tables** via **filters**.
+* Syntax example (simplified for exam):
+
+  * `CREATE ROLE FinanceRole;`
+  * `FILTER ON EmployeeData WHERE Department = 'Finance';`
+* **Exam trap:** RLS **does not prevent access to the container**, only filters rows.
+
+**D. Workspace-Level Security**
+
+* Permissions are **additive**, cannot bypass domain ACLs.
+* Use for collaboration, **not for sensitive datasets**.
+
+---
+
+### **3️⃣ Scope & Hierarchy**
+
+| Level           | Scope                                   | Can override?                                     |
+| --------------- | --------------------------------------- | ------------------------------------------------- |
+| Domain-level    | Container-wide, all users/groups in AD  | Yes, workspace cannot override container security |
+| Workspace-level | Notebook, pipeline, or dashboard access | Cannot override domain ACLs                       |
+| Notebook/Table  | RLS applies here                        | Filters rows, not container access                |
+
+**Visual Summary (Textual Diagram)**
+
+```
+OneLake Security Scope
+
+Domain-level ACLs  -->  Container access control (Read/Write/Manage)
+    └─ Workspace-level access  --> Notebook/Pipeline collaboration (cannot override domain)
+          └─ Table-level RLS  --> Row-level data visibility per user/group
+Audit Logging  --> Tracks all access events
+```
+
+---
+
+### **4️⃣ Exam Traps & Tips**
+
+1. **Trap:** Confusing RLS with domain ACLs.
+
+   * **Tip:** RLS filters rows, ACLs control actual access.
+
+2. **Trap:** Thinking workspace-level access can secure sensitive domain data.
+
+   * **Tip:** Workspace-level security is **additive**, not overriding.
+
+3. **Trap:** Using default domain permissions for sensitive data.
+
+   * **Tip:** Always explicitly assign groups.
+
+4. **Tip:** Use **Azure AD groups**, not individual users, for exam scenarios.
+
+5. **Tip:** When asked about audit/compliance, always include **audit logging at the container/domain level**.
+
+---
+
+If you want, I can also make a **one-page visual cheat sheet diagram** specifically for quick DP-700 revision on **OneLake security**, combining **ACLs, RLS, workspace, audit** all in one image. It’s extremely helpful for exams.
+
+Do you want me to make that visual next?
