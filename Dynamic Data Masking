@@ -1,0 +1,131 @@
+Perfect! Let’s make a **comprehensive cheat sheet for Dynamic Data Masking (DDM)** and related exam topics under **“Configure security and governance”** for DP-700. I’ll keep it **concise, high-yield, and exam-focused**, with clear tables, tips, and a visual summary.
+
+---
+
+# **DP-700 Cheat Sheet: Dynamic Data Masking (DDM)**
+
+---
+
+## **1️⃣ Key Concepts**
+
+| Concept                        | Explanation                                                                                                                                                                                                 |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Dynamic Data Masking (DDM)** | Masks sensitive column data at **query time** for users **without UNMASK permission**. Does **not encrypt data**.                                                                                           |
+| **Purpose**                    | Protect sensitive information while allowing analytics users to query data.                                                                                                                                 |
+| **Scope**                      | Column-level masking in a **table** (or view). Cannot filter rows.                                                                                                                                          |
+| **Permissions**                | `UNMASK` permission overrides the mask for a user/role.                                                                                                                                                     |
+| **Types of Masks**             | 1. `default()` → generic mask<br>2. `email()` → keeps first character + domain<br>3. `partial(prefix, padding, suffix)` → mask parts of string/numeric<br>4. `random()` → random number for numeric columns |
+
+---
+
+## **2️⃣ Masking Functions & Examples**
+
+| Function                           | Usage                                        | Example                                         |
+| ---------------------------------- | -------------------------------------------- | ----------------------------------------------- |
+| `default()`                        | Replace entire column with generic mask      | `MASKED WITH (FUNCTION = 'default()')` → `XXXX` |
+| `email()`                          | Keep first character + domain, mask the rest | `a***@xyz.com`                                  |
+| `partial(prefix, padding, suffix)` | Keep prefix/suffix, mask middle              | `partial(0,"XXXX",4)` → `XXXX1234`              |
+| `random()`                         | Random number for numeric columns            | `random(1000,9999)` → `4567`                    |
+
+---
+
+## **3️⃣ Configuration / Syntax**
+
+**Example: Mask Email and Credit Card columns**
+
+```sql
+ALTER TABLE CustomerInfo
+ALTER COLUMN Email ADD MASKED WITH (FUNCTION = 'email()');
+
+ALTER TABLE CustomerInfo
+ALTER COLUMN CreditCardNumber ADD MASKED WITH (FUNCTION = 'partial(0,"XXXX",4)');
+```
+
+**Granting UNMASK:**
+
+```sql
+GRANT UNMASK TO DataAdmin;
+```
+
+**Removing Mask:**
+
+```sql
+ALTER TABLE CustomerInfo
+ALTER COLUMN Email DROP MASKED;
+```
+
+---
+
+## **4️⃣ Scope & Limitations**
+
+| Feature                      | Notes                                                                                |
+| ---------------------------- | ------------------------------------------------------------------------------------ |
+| **Scope**                    | Column-level only, applied to table or view.                                         |
+| **Row-Level Security (RLS)** | Separate from DDM, masks rows, not column values.                                    |
+| **Computed Columns**         | DDM can mask computed columns if compatible type.                                    |
+| **Users with UNMASK**        | Can see full column values even if DDM is applied.                                   |
+| **Encryption**               | DDM is **not encryption**. For full protection, use **Always Encrypted** or **TDE**. |
+
+---
+
+## **5️⃣ Exam Traps & Tips**
+
+1. **DDM ≠ Encryption**
+
+   * DDM hides data in queries; **doesn’t protect against DB admins** or backups.
+
+2. **DDM vs RLS**
+
+   * DDM → column masking
+   * RLS → row filtering
+
+3. **UNMASK permission**
+
+   * Always check which roles/users have UNMASK; it overrides DDM.
+
+4. **Function choice matters**
+
+   * Use `email()` for emails, `partial()` for numeric IDs, `default()` if generic masking is acceptable.
+
+5. **TDE is not masking**
+
+   * Transparent Data Encryption (TDE) encrypts **data at rest**, not at query time.
+
+---
+
+## **6️⃣ Visual Summary**
+
+```
+          ┌─────────────────────────────┐
+          │       Table/Column          │
+          │-----------------------------│
+Column 1: Masked? --> DDM FUNCTION         │
+Column 2: Masked? --> DDM FUNCTION         │
+Column 3: Sensitive → UNMASK? Yes/No       │
+          └─────────────────────────────┘
+                  
+Query execution:  
+  User without UNMASK → sees masked data
+  User with UNMASK → sees full data
+
+Masking Functions:
+  default()  email()  partial()  random()
+```
+
+*(Simple diagram: DDM acts as a layer **between the query and the results**, masking values unless UNMASK permission exists.)*
+
+---
+
+## **7️⃣ Quick Revision Tips for DP-700**
+
+* Always distinguish **masking vs encryption vs row-level security**.
+* Remember **masking functions** and typical scenarios (email, SSN, credit card).
+* Know **permissions**: `UNMASK` role overrides DDM.
+* Watch for exam traps that suggest **TDE or views** instead of DDM.
+* **Syntax matters**: `ALTER TABLE ... ALTER COLUMN ... ADD MASKED WITH ...`
+
+---
+
+If you want, I can also make a **single-page “Visual Cheat Map”** showing **all masking types, permissions, and data flows**, perfect for **last-minute DP-700 revision**.
+
+Do you want me to create that visual cheat map next?
