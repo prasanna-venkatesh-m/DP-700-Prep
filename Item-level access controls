@@ -1,0 +1,209 @@
+Below is a **clean, exam-ready cheat sheet** you can use for **last-minute DP-700 revision** on:
+
+> **Implement and manage an analytics solution → Configure security and governance → Implement item-level access controls**
+
+---
+
+# 🧠 DP-700 Cheat Sheet
+
+## Implement Item-Level Access Controls (Microsoft Fabric)
+
+---
+
+## 1️⃣ Core Security Layers (EXAM FUNDAMENTAL)
+
+Security is evaluated **top-down**:
+
+```
+Workspace access
+   ↓
+Item-level permissions
+   ↓
+Object-Level Security (OLS)
+   ↓
+Row-Level Security (RLS)
+   ↓
+Query result
+```
+
+⚠️ **If a user fails at any level, lower layers are never evaluated.**
+
+---
+
+## 2️⃣ Item-Level Access Control (What it REALLY means)
+
+Item-level access controls:
+
+* Determine **who can access an item**
+* Apply to:
+
+  * Lakehouses
+  * Warehouses
+  * Semantic models
+  * Notebooks
+
+❌ They do **not**:
+
+* Filter rows
+* Hide columns
+
+That is handled by **RLS / OLS**.
+
+---
+
+## 3️⃣ Row-Level Security (RLS)
+
+### Purpose
+
+* Restrict **rows** returned to users
+* Evaluated **at query time**
+* Uses:
+
+  * User identity
+  * Group membership
+
+---
+
+### Where RLS Can Be Defined
+
+| Location                       | Enforced For   | Exam Note                      |
+| ------------------------------ | -------------- | ------------------------------ |
+| **Semantic model**             | Power BI only  | ❌ Does NOT secure SQL endpoint |
+| **Warehouse (SQL predicates)** | SQL + Power BI | ✅ Strongest enforcement        |
+
+📌 **Exam rule:**
+
+> “Regardless of access method” → **Warehouse-level RLS**
+
+---
+
+### Typical Use Cases
+
+* Region-based access
+* Department-based filtering
+* Multi-tenant reporting
+
+---
+
+## 4️⃣ Object-Level Security (OLS)
+
+### Purpose
+
+* Hide:
+
+  * Columns
+  * Tables
+* Does **not** filter rows
+
+### Scope
+
+* Defined in **semantic model**
+* Applies to all Power BI access
+
+---
+
+### When to Use OLS
+
+* Finance sees cost columns
+* Sales does not
+* Curated vs raw tables
+
+---
+
+## 5️⃣ Workspace Roles vs Item Permissions
+
+### Workspace Roles
+
+| Role        | Purpose        |
+| ----------- | -------------- |
+| Admin       | Full control   |
+| Member      | Edit content   |
+| Contributor | Create content |
+| Viewer      | Read-only      |
+
+⚠️ Workspace roles:
+
+* Control **visibility**
+* Do **not** enforce data security
+
+---
+
+### Item Permissions
+
+* Required before:
+
+  * RLS
+  * OLS
+* If user cannot access item → security rules never apply
+
+---
+
+## 6️⃣ Lakehouse vs Warehouse Security (EXAM FAVORITE)
+
+| Feature                    | Lakehouse    | Warehouse        |
+| -------------------------- | ------------ | ---------------- |
+| SQL GRANT                  | ❌ Limited    | ✅ Supported      |
+| RLS                        | ❌ Data-layer | ✅ SQL predicates |
+| Semantic model RLS         | ✅            | ✅                |
+| Best for enforced security | ❌            | ✅                |
+
+📌 **Rule:**
+**Warehouse = stronger security boundary**
+
+---
+
+## 7️⃣ Common Exam Traps 🚨
+
+❌ Perspectives = security
+❌ Workspace roles filter data
+❌ RLS hides columns
+❌ Semantic model RLS secures SQL access
+❌ Views guarantee security
+❌ GRANT SELECT filters rows
+
+---
+
+## 8️⃣ Exam Keywords → Correct Feature
+
+| Exam Phrase                                     | Think             |
+| ----------------------------------------------- | ----------------- |
+| “Same dataset, different users, different rows” | RLS               |
+| “Hide columns/tables”                           | OLS               |
+| “Regardless of access method”                   | Warehouse RLS     |
+| “Must not see”                                  | Enforced security |
+| “User experience only”                          | Perspectives      |
+
+---
+
+## 9️⃣ Minimal Secure Design Pattern (BEST PRACTICE)
+
+```
+Workspace access (least privilege)
+   ↓
+Item permissions
+   ↓
+Warehouse-level RLS (if needed)
+   ↓
+Semantic model OLS / RLS
+```
+
+---
+
+## 🔟 30-Second Exam Recall
+
+* RLS = rows
+* OLS = columns/tables
+* Workspace roles ≠ data security
+* Warehouse RLS > semantic model RLS
+* Perspectives ≠ security
+* No item access = no security evaluation
+
+---
+
+If you want, I can:
+
+* Turn this into a **one-page PDF-style summary**
+* Run a **final DP-700 rapid-fire quiz**
+* Do a **compare-and-contrast table for all security features**
+
+Just tell me 👍
