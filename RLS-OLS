@@ -1,0 +1,91 @@
+DP-700 – Security & Governance Cheat Sheet
+
+1. Row-Level Security (RLS)
+Purpose: Restrict access to specific rows in tables based on user roles.
+
+Feature            | Details
+------------------ | ------------------------------------------------------------
+Scope              | Semantic model (shared across reports, datasets, external tools)
+Types              | Static RLS (fixed filter)
+                   | Dynamic RLS (filter changes based on user, e.g., UPN/email)
+Configuration      | Roles → DAX filter expression
+                   | Dynamic: USERPRINCIPALNAME() function
+Best Practices     | Centralized at model level, avoid per-report filters, test with "View As Roles"
+Exam Traps         | RLS does not control column visibility (that's OLS)
+                   | RLS applies to all connections, not just Power BI
+
+Example DAX:
+[Region] = LOOKUPVALUE(UserRegion[Region], UserRegion[Email], USERPRINCIPALNAME())
+
+2. Column-Level / Object-Level Security (OLS)
+Purpose: Restrict access to specific columns or tables in a model.
+
+Feature            | Details
+------------------ | ------------------------------------------------------------
+Scope              | Semantic model (Power BI, Excel, SQL clients)
+Configuration      | Security roles → deny access to tables/columns
+                   | Can combine with RLS
+Best Practices     | Use for sensitive columns (Salary, SSN), test restricted role
+Exam Traps         | Hiding columns in model view ≠ security
+                   | OLS only applies within semantic model
+
+3. Folder/File-Level Security (Lakehouse / OneLake)
+Purpose: Control access to folders/files in Fabric storage.
+
+Feature            | Details
+------------------ | ------------------------------------------------------------
+Scope              | Storage layer (Lakehouse / OneLake)
+Configuration      | Role-based permissions: Read / Write / Modify, applied to AD groups
+Best Practices     | Team-specific access, combine with semantic model security
+Exam Traps         | Workspace roles do not enforce folder-level access
+                   | Notebook-level security does not persist for files
+
+Example:
+/finance → FinanceGroup: Read/Write
+/raw → DataEngineers: Read/Write
+
+4. Scope Overview
+
+Level                        | What it Secures                                              | Example
+---------------------------- | ------------------------------------------------------------ | ------------------------
+Workspace                    | Entire workspace artifacts (datasets, notebooks, dashboards) | Power BI Viewer/Member/Admin roles
+Semantic Model / Dataset     | Tables, columns, rows                                        | RLS, OLS
+Folder / File                | Files in Lakehouse                                           | OneLake folder permissions
+Notebook / Cell              | Code execution                                               | Access to data during run (runtime only)
+
+Tip: workspace = container, semantic model = object, folder = storage
+
+5. Common Exam Traps & Tips
+
+Trap                                       | Explanation                                                       | How to Avoid
+------------------------------------------ | ----------------------------------------------------------------- | -------------------------------------------------
+Confusing RLS vs OLS                       | RLS filters rows, OLS hides columns/tables                        | Remember: RLS = row, OLS = object
+Hiding columns/tables ≠ security           | Users can query via external tools                                | Use OLS to enforce
+Workspace permissions ≠ folder permissions | Workspace controls artifacts, not storage                          | Check OneLake/Lakehouse folder security
+Static vs Dynamic RLS                      | Only static filters do not adapt to user                           | Use Dynamic RLS for multi-user scenarios
+Perspectives ≠ security                    | Perspectives are just views                                        | Cannot enforce restrictions
+
+6. Quick Visual Summary
+
++---------------------+
+| Workspace           | <- Controls access to datasets, notebooks, dashboards
++---------------------+
+        |
+        v
++---------------------+
+| Semantic Model      | <- Contains tables & columns
+|  + RLS: row filter  | <- Row-Level Security
+|  + OLS: object hide | <- Column/Table-Level Security
++---------------------+
+        |
+        v
++---------------------+
+| Lakehouse / Files   | <- Folder/File-Level Security (OneLake)
+|  + Folder Permissions|
++---------------------+
+
+Memory Trick:
+R = Row → RLS
+C = Column → OLS (object)
+F = Folder/File → Lakehouse security
+W = Workspace → container-level role
