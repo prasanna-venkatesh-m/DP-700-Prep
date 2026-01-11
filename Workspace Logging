@@ -1,0 +1,149 @@
+Perfect! Let’s create a **comprehensive cheat sheet** for **“Implement and manage an analytics solution → Configure security and governance → Implement and use workspace logging”** for DP-700. I’ll make it **exam-focused**, covering **concepts, settings, scope, tips, and a visual summary**.
+
+---
+
+# **DP-700 Cheat Sheet: Workspace Logging**
+
+## **1. Key Concepts**
+
+| Concept                    | Description                                                                                                         | Exam Relevance                                                                   |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| **Workspace logging**      | Collects audit and activity logs for Azure Synapse workspace, pipelines, SQL pools, notebooks, and linked services. | Used for compliance, monitoring, and troubleshooting.                            |
+| **Audit logs**             | Record **who did what, when, from where**. Required for regulatory compliance.                                      | Tracks user activity, SQL queries, notebook execution, pipeline runs.            |
+| **Diagnostic settings**    | Allows sending logs/metrics to **Log Analytics, Storage, or Event Hub**.                                            | Workspace-level logging; often exam-tested.                                      |
+| **Azure Monitor metrics**  | Performance and usage metrics (CPU, DWU, query counts).                                                             | NOT sufficient for audit/compliance purposes.                                    |
+| **Notebook-level logging** | Logging only inside notebooks.                                                                                      | Insufficient for full workspace audit; only useful for notebook troubleshooting. |
+| **Log destinations**       | Where logs are sent: **Log Analytics, Storage, Event Hub**.                                                         | Important for exam multi-select questions.                                       |
+
+---
+
+## **2. Configuration / Settings**
+
+**A. Diagnostic Settings**
+
+* Go to Synapse Workspace → **Diagnostic settings** → **Add diagnostic setting**
+* Options:
+
+  * **Log categories**: SQL requests, pipelines, triggers, notebooks
+  * **Destinations**:
+
+    * Log Analytics → query and alert
+    * Storage account → long-term retention
+    * Event Hub → SIEM / external monitoring
+* Retention: Configurable in Storage or Log Analytics (default for LA may be 30 days).
+
+**B. Synapse Auditing**
+
+* Workspace → **Auditing** → **Enable auditing**
+* Sends logs to: Log Analytics, Storage, Event Hub
+* Captures: SQL queries, pipeline runs, notebook execution, data access events
+
+**C. Notebook logging**
+
+* Implemented per notebook using Python / Spark logging
+* Useful for debugging or workflow-specific logs
+* Not sufficient for **workspace-wide audit**
+
+**D. Centralized monitoring for multiple workspaces**
+
+* Each workspace → **Diagnostic settings → send to central Log Analytics**
+* Optional: Send to central Storage for long-term retention
+* Enables **centralized alerts** and compliance reporting
+
+---
+
+## **3. Scope / Levels**
+
+| Scope                             | What it covers                                | Exam Tip                                                            |
+| --------------------------------- | --------------------------------------------- | ------------------------------------------------------------------- |
+| Workspace-level                   | All SQL pools, pipelines, notebooks, triggers | Central for compliance; always check “workspace-level” in questions |
+| Domain-level (Azure subscription) | All workspaces under a subscription           | Often used in multi-subscription centralized logging                |
+| Notebook-level                    | Only code execution inside that notebook      | Rarely sufficient for exam; used for debugging                      |
+
+---
+
+## **4. Exam Traps / Tips**
+
+1. **Metrics ≠ Audit logs**
+
+   * Metrics only track counts or performance, not **who/what/when**.
+
+2. **Notebook logging is not enough**
+
+   * Exam often tries to trick you by asking if notebook logging satisfies compliance.
+
+3. **Destinations matter**
+
+   * Log Analytics → query & alert
+   * Storage → long-term retention
+   * Event Hub → SIEM / streaming / third-party
+
+4. **Diagnostic settings vs auditing**
+
+   * Both can track workspace activity; differences are subtle.
+   * Diagnostic settings: broader metrics, optional destinations
+   * Auditing: compliance-focused, sometimes mandatory for governance
+
+5. **Retention periods are configurable**
+
+   * Don’t assume default (30 days); exam may ask about storing logs **> 1 year**.
+
+6. **Centralized monitoring**
+
+   * Use **central Log Analytics workspace** for alerts and compliance reporting.
+
+---
+
+## **5. Quick Decision Flow (Exam Shortcut)**
+
+```
+Do I need to track all workspace activity for compliance?
+            |
+          YES
+            |
+    Enable Auditing + Diagnostic Settings
+            |
+  Choose log destination:
+  - Log Analytics → query/alert
+  - Storage → long-term retention
+  - Event Hub → SIEM / external tools
+            |
+   (Optional) Notebook logging for debugging only
+```
+
+---
+
+## **6. Visual Summary / Diagram**
+
+```
+             +---------------------+
+             |  Synapse Workspace  |
+             +---------------------+
+                     |
+   -------------------------------------------
+   |                   |                     |
+SQL Pools           Pipelines            Notebooks
+   |                   |                     |
+   |                   |                     |
+   +----------- Workspace Logging -----------+
+                   |      |       |
+                   |      |       |
+         +---------+      |       +----------+
+         |                |                  |
+   Log Analytics       Storage Account     Event Hub
+   - Query & Alert     - Long-term         - SIEM / Streaming
+   - Alert Rules       - Retention >1yr
+```
+
+---
+
+✅ **Exam Tip:**
+
+* If a question mentions **compliance, auditing, or tracking all users’ activity**, always think **“auditing + diagnostic settings”**.
+* Metrics or notebook logs alone are **almost never enough**.
+
+---
+
+I can also make a **tiny one-page “memory map” version** of this for **ultra-fast last-minute revision**—it’s very popular with DP-700 students.
+
+Do you want me to make that next?
