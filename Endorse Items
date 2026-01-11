@@ -1,0 +1,123 @@
+DP-700 Cheat Sheet: Endorse Items (Power BI & Azure Synapse)
+
+1. Key Concepts
+
+Term: Certified Dataset
+Meaning: Formally reviewed & approved by dataset owner or workspace admin. Trusted for organizational reporting.
+Exam Tip: Only owner/admin can certify. Users see a “certified” badge.
+
+Term: Promoted Dataset
+Meaning: Recommended dataset, approved for reuse, less formal than certified.
+Exam Tip: Any contributor can promote. Shows as “promoted” badge.
+
+Term: Favorite
+Meaning: Personal bookmark of dataset or report.
+Exam Tip: Does not indicate trust. Personal visibility only.
+
+Term: Endorsement
+Meaning: General term for marking a dataset as promoted or certified. Signals reliability to other users.
+Exam Tip: Used in governance policies.
+
+Term: Unendorsed Dataset
+Meaning: No certification or promotion.
+Exam Tip: Users may see warnings; not trusted for official reporting.
+
+2. Configurations / Settings
+
+Certify a Dataset
+- Dataset must exist in workspace.
+- Only dataset owner or workspace admin can certify.
+- Displays certified badge.
+- Can revoke certification if dataset becomes outdated.
+
+Promote a Dataset
+- Dataset must exist in workspace.
+- Any contributor can promote.
+- Displays promoted badge.
+- Signifies recommended for reuse, less formal than certified.
+
+Favorite
+- Click star icon on dataset/report.
+- Only affects your view, not others.
+
+Workspace Governance Recommendations
+- Development workspace → Experimental, unendorsed datasets.
+- Production/shared workspace → Certified datasets for official use.
+- Promote datasets for recommended reuse without full certification.
+
+3. Scope: Workspace vs Domain vs Notebook
+
+Action: Certified
+Scope: Workspace
+Notes: Only applies inside the workspace. Does not propagate across workspaces automatically.
+
+Action: Promoted
+Scope: Workspace
+Notes: Local to workspace; signals recommendation.
+
+Action: Favorite
+Scope: User
+Notes: Personal visibility only.
+
+Action: Cross-workspace reuse
+Scope: Can be achieved by publishing promoted/certified datasets to other workspaces or sharing via dataflows.
+Notes: Endorsement badge does not auto-propagate.
+
+Exam trap: Don’t assume certification is organization-wide; it’s workspace-scoped unless explicitly published elsewhere.
+
+4. Exam Traps & Tips
+
+Trap: Confusing Promote vs Certify
+Explanation: Promote = recommended; Certify = trusted
+How to Avoid: Remember: Promotion = flexible, Certify = formal
+
+Trap: Certification scope
+Explanation: Many think certifying in one workspace affects others
+How to Avoid: Always check: workspace-specific
+
+Trap: Favorites = endorsement
+Explanation: Favoriting does not signal trust
+How to Avoid: Favorites are personal only
+
+Trap: Revoking certification
+Explanation: Some think certification is permanent
+How to Avoid: Certification can be revoked
+
+Trap: Contributor permissions
+Explanation: Contributors cannot certify
+How to Avoid: Only owners/admins can certify
+
+Memory tip: Think “C” for Certified = Controlled / formal, “P” for Promoted = Popular / recommended.
+
+5. Quick Visual Summary
+
++---------------------------------------+
+|        Dataset Endorsement Types      |
++----------------+----------------------+
+| Certified      | Promoted             |
+|----------------|----------------------|
+| Trusted        | Recommended          |
+| Workspace only | Workspace only       |
+| Admin/Owner    | Contributor          |
+| Badge: ✅       | Badge: ⭐             |
+| Can revoke     | Can revoke           |
++----------------+----------------------+
+|
++-- Favorite (⭐ personal)
+|   - Personal only
+|   - No endorsement
+|
++-- Unendorsed
+    - Users may see warning ⚠
+
+Flow for Governance Example:
+
+Development Workspace → Experiment → Promote for reuse → Production Workspace → Certify → Official reporting
+
+6. Exam Memory Hooks
+
+C → Certified → Controlled / Trusted
+P → Promoted → Popular / Recommended
+F → Favorite → Personal Only
+Endorsement badges = trust signal
+Scope = workspace, not org-wide
