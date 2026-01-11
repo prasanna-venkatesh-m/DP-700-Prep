@@ -1,0 +1,114 @@
+DP-700 – Implement Lifecycle Management in Fabric: Database Projects (Cheat Sheet)
+
+1. Key Concepts
+
+Database Project: Declarative definition of database schema (DDL) used to:
+- Track schema changes in source control
+- Deploy schema changes consistently across environments
+- Detect and prevent schema drift
+
+Notes:
+- Manages schema only
+- Does NOT manage data
+
+Objects included:
+- Tables
+- Views
+- Stored procedures
+- Functions
+- Schemas
+- Security objects (users, roles – schema level)
+
+Problems solved:
+Problem: Manual schema changes → Solution: Declarative deployments
+Problem: Production drift → Solution: Drift detection
+Problem: Inconsistent environments → Solution: CI/CD pipelines
+Problem: No rollback → Solution: Git versioning
+
+2. Lifecycle Management Flow
+
+Git Repo (Database Project) → CI Pipeline (Build & Validate) → Artifact (Schema Package) → Fabric Deployment Pipeline (Dev → Test → Prod)
+
+Key idea: Never deploy by editing Production directly.
+
+3. Scope & Locations
+
+Component: Database Project → Scope: Source control (Git)
+Component: Fabric Warehouse → Scope: Workspace
+Component: Deployment Pipeline → Scope: Workspace-to-workspace
+Component: Schema Drift → Scope: Warehouse level
+Component: Notebooks → Scope: Workspace (not used for schema lifecycle)
+
+Exam trap: Database projects are NOT domain-level objects.
+
+4. Configuration & Settings
+
+CI/CD Integration:
+- Database project stored in Azure DevOps Git or GitHub
+- CI pipeline: Build & validate schema, generate deployment artifacts
+
+Deployment Pipelines:
+- Promote changes Dev → Test → Prod
+- Enforces approval gates and controlled promotion
+
+Parameterization:
+- Environment-specific values
+- Connection strings
+- Resource references
+
+Purpose: Prevents hardcoding environment values.
+
+5. Database Projects: DO vs DO NOT
+
+DO:
+- Declarative schema management
+- Version control
+- Schema comparison
+- Drift detection
+- Repeatable deployments
+
+DO NOT:
+- Move or sync data
+- Replicate data
+- Run transformations
+- Replace ETL pipelines
+- Automatically fix Production data
+
+6. Common Exam Traps
+
+Trap 1: Schema vs Data – “Ensures tables are identical and data is synchronized” → Wrong, database projects never manage data
+
+Trap 2: Notebooks for Lifecycle – “Use notebooks to deploy schema across environments” → Not lifecycle-safe, no drift prevention, no declarative enforcement
+
+Trap 3: Direct Production Fixes – “Hotfix Production to resolve schema issues” → Always breaks lifecycle governance
+
+Trap 4: Real-time or Mirroring Confusion – Mirroring, Replication, OneLake sync → None of these are database projects
+
+7. When to Choose Database Projects (Scenario Keywords)
+- CI/CD
+- Dev/Test/Prod
+- Governance
+- Schema drift
+- Repeatable deployments
+- Source control
+
+If these keywords appear, Database projects are the answer.
+
+8. One-Minute Mental Checklist
+
+Ask yourself:
+1. Is this schema only?
+2. Is Git + CI/CD involved?
+3. Are we promoting across workspaces?
+
+If yes → Database Project
+
+9. Visual Summary
+
+Developer → SQL DDL → Database Project (Git) → CI/CD Pipeline → Fabric Deployment Pipeline → Warehouse Schema (Dev/Test/Prod)
+
+10. Final Exam Advice
+
+- If data movement is mentioned → Not database projects
+- If governance + drift is mentioned → Database projects
+- Production should never be edited manually
