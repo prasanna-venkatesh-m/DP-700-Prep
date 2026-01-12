@@ -1,0 +1,127 @@
+## DP-700 – Implement & Manage an Analytics Solution  
+### Orchestrate Processes: Choose between Dataflow Gen2, Pipeline, and Notebook
+
+---
+
+## 📌 Tool Comparison (High-Yield)
+
+| Requirement      | Dataflow Gen2           | Fabric Pipeline        | Fabric Notebook       |
+|------------------|-------------------------|------------------------|-----------------------|
+| Purpose          | Ingest & transform data | Orchestration          | Complex processing    |
+| Code required    | ❌ No                   | ❌ No                  | ✅ Yes                |
+| Transform type   | Power Query             | None                   | PySpark / SQL         |
+| Scheduling       | ✅ Yes                  | ✅ Yes                 | ⚠️ Via Pipeline       |
+| Failure handling | ❌ Limited              | ✅ Yes                 | ⚠️ Via Pipeline       |
+| Big data / Spark | ❌ No                   | ❌ No                  | ✅ Yes                |
+| Analyst-friendly | ✅ Yes                  | ⚠️ Neutral             | ❌ No                 |
+
+---
+
+## 🔹 Dataflow Gen2
+
+**Key Concepts**
+- Low-code / no-code ingestion  
+- Power Query transformations  
+- Analyst-driven  
+
+**Use When**
+- SaaS or relational sources  
+- Basic–moderate transformations  
+- Scheduled refresh  
+- No Spark or Python required  
+
+**Configuration / Settings**
+- Power Query editor  
+- On-prem gateway (if needed)  
+- Destination: Lakehouse or Warehouse  
+
+**Scope**
+- Workspace-level  
+
+**Avoid When**
+- Very large datasets  
+- Complex joins or custom logic  
+
+---
+
+## 🔹 Fabric Pipeline
+
+**Key Concepts**
+- Orchestration & control flow  
+- Sequencing, retries, dependencies  
+- Central monitoring  
+
+**Use When**
+- Run items in a specific order  
+- Trigger Dataflows, Notebooks, SQL scripts  
+- Failure handling is required  
+
+**Configuration / Settings**
+- Activities (Notebook, Dataflow, Copy Data)  
+- Dependency conditions  
+- Retry policies  
+
+**Scope**
+- Workspace-level  
+
+**Avoid When**
+- Only transformations are needed  
+
+---
+
+## 🔹 Fabric Notebook
+
+**Key Concepts**
+- Code-first analytics  
+- Spark-based execution  
+- High performance & scalability  
+
+**Use When**
+- Big data processing  
+- Complex transformations  
+- PySpark / Python / SQL logic  
+- Performance tuning required  
+
+**Configuration / Settings**
+- Spark configuration  
+- Libraries  
+- Parameters  
+
+**Scope**
+- Workspace-level  
+
+**Avoid When**
+- No-code requirement  
+- Simple ingestion scenarios  
+
+---
+
+## ⚠️ Exam Traps & Tips
+
+**Common Traps**
+- ❌ Using Notebook for simple ingestion  
+- ❌ Using Spark when Power Query is sufficient  
+- ❌ Forgetting Pipeline for orchestration  
+
+**Decision Shortcuts (Memorize)**
+- No-code + SaaS → **Dataflow Gen2**  
+- Run X then Y then Z → **Fabric Pipeline**  
+- PySpark + big data → **Notebook**  
+- End-to-end flow → **Pipeline + (Dataflow / Notebook)**  
+
+---
+
+## 🧠 Visual Mental Model
+
+    +-------------------+
+    |  Fabric Pipeline  |
+    | (Orchestration)   |
+    +---------+---------+
+              |
+ +------------+------------+
+ |                         |
++------------+ +----------------+
+| Dataflow | | Notebook |
+| Gen2 | | (PySpark/SQL) |
+| PowerQuery | | Big Data |
++------------+ +----------------+
