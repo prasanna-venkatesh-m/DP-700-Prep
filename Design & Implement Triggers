@@ -1,0 +1,173 @@
+## 📘 DP-700 – Implement & Manage an Analytics Solution  
+### Design & Implement Schedules and Event-Based Triggers (Microsoft Fabric)
+
+---
+
+## 1️⃣ Trigger Types in Microsoft Fabric
+
+### 🔁 Schedule Trigger
+
+**What it does**
+- Runs a pipeline at a fixed time or recurrence  
+- Uses **UTC time only**
+
+**Best for**
+- Daily / weekly batch jobs  
+- Predictable ingestion windows  
+
+**Key properties**
+- Start time (UTC)  
+- Recurrence (minute / hour / day / week)  
+- Interval (e.g., every 1 day)
+
+**Limitations**
+- Runs even when no new data exists  
+- No state tracking  
+- Can cause unnecessary compute cost  
+
+📌 **Exam signal**  
+“Run every day at 02:00” → **Schedule trigger**
+
+---
+
+### ⚡ Event-Based Trigger
+
+**What it does**
+- Starts a pipeline when a file is created  
+- Uses **Azure Event Grid**
+
+**Best for**
+- Near real-time ingestion  
+- Sporadic or unpredictable data arrival  
+
+**Key requirements**
+- Storage account supports Event Grid  
+- Permissions to create event subscriptions  
+- Triggered mainly on **file creation** events  
+
+**Advantages**
+- Cost-efficient  
+- No polling  
+- Faster ingestion  
+
+**Limitations**
+- No exactly-once guarantee  
+- File updates may NOT trigger  
+- One trigger per storage location  
+
+📌 **Exam signal**  
+“When a new file arrives” → **Event-based trigger**
+
+---
+
+### ⏱ Tumbling Window Trigger
+
+**What it does**
+- Divides time into fixed, non-overlapping windows  
+- Tracks state per window  
+
+**Best for**
+- Exactly-once processing  
+- Late-arriving data  
+- Retry-safe pipelines  
+
+**Key features**
+- Window size (e.g., 1 hour)  
+- Offset  
+- Retry policies  
+- Watermark support  
+
+**Why it matters**
+- Ensures each time slice is processed once and only once  
+
+📌 **Exam signal**  
+“Exactly once”, “hourly slices”, “late data” → **Tumbling window**
+
+---
+
+## 2️⃣ Trigger Configuration Scope
+
+| Item               | Scope     |
+|--------------------|-----------|
+| Pipelines          | Workspace |
+| Triggers           | Workspace |
+| Lakehouse          | Workspace |
+| Notebook execution | Workspace |
+| Domain             | Governance only |
+
+📌 **Exam trap**  
+Triggers are NOT tenant-level and NOT notebook-level
+
+---
+
+## 3️⃣ Key Configuration Settings to Remember
+
+### Schedule Triggers
+- Time zone: **UTC only**  
+- Start time is mandatory  
+- Recurrence ≠ interval  
+
+### Event-Based Triggers
+- Requires Event Grid  
+- Needs permissions  
+- Reacts to file creation  
+- Cannot aggregate multiple storage accounts  
+
+### Tumbling Window Triggers
+- Window size  
+- Start time  
+- Retry policy  
+- State management enabled  
+
+---
+
+## 4️⃣ Common DP-700 Exam Traps 🚨
+
+| Trap                                        | Correct Thinking                          |
+|---------------------------------------------|-------------------------------------------|
+| Event-based = exactly-once                  | ❌ Only tumbling window guarantees this   |
+| Schedule triggers are real-time             | ❌ They are polling-based                 |
+| File updates trigger events                 | ❌ Usually only create events             |
+| Time zone doesn’t matter                    | ❌ Always UTC                             |
+| One trigger can watch many storage accounts | ❌ One location per trigger               |
+
+---
+
+## 5️⃣ “If You See This → Choose This” Rules
+
+| Exam Wording                | Best Answer             |
+|-----------------------------|-------------------------|
+| “When a file arrives”       | Event-based trigger     |
+| “Run every day at…”         | Schedule trigger        |
+| “Exactly once per hour/day” | Tumbling window trigger |
+| “Late-arriving data”        | Tumbling window         |
+| “Reduce unnecessary runs”   | Event-based trigger     |
+| “Retry without duplication” | Tumbling window         |
+
+---
+
+## 6️⃣ Visual Summary (Quick Mental Diagram)
+
+          ┌────────────────────────┐
+          │   Trigger Selection    │
+          └─────────┬──────────────┘
+                    │
+     ┌──────────────┼───────────────┐
+     │              │               │
+┌─────────┐   ┌────────────┐   ┌────────────────┐
+│Schedule │   │ Event-based│   │ Tumbling Window │
+└─────────┘   └────────────┘   └────────────────┘
+     │              │               │
+Fixed time     File arrival     Time slices
+UTC only       Event Grid       Stateful
+Batch jobs     Near real-time   Exactly-once
+
+---
+
+## 7️⃣ Final Exam Advice 🎯
+
+- Read for intent, not keywords  
+- Time-based reliability → **Tumbling window**  
+- Cost & efficiency → **Event-based**  
+- Predictable batch → **Schedule**  
+- Always assume **UTC**
