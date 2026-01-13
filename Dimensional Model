@@ -1,0 +1,286 @@
+DP-700 CHEAT SHEET
+Ingest and Transform Data → Design and Implement Loading Patterns
+Prepare Data for Loading into a Dimensional Model (Microsoft Fabric)
+
+============================================================
+
+1) CORE DIMENSIONAL MODELING CONCEPTS (EXAM MUST-KNOW)
+-----------------------------------------------------
+
+STAR SCHEMA BASICS
+
+Fact tables:
+- Transactional data
+- Numeric measures
+- High volume
+- Reference dimensions using SURROGATE KEYS
+
+Dimension tables:
+- Descriptive attributes
+- Low volume
+- Examples: Customer, Product, Date
+
+Golden rule:
+Facts describe EVENTS.
+Dimensions provide CONTEXT.
+
+============================================================
+
+2) LOADING PATTERNS (VERY EXAM-HEAVY)
+------------------------------------
+
+FACT TABLE LOADING PATTERNS
+
+Pattern: Full reload
+When to use:
+- Small datasets
+- No history required
+Exam note:
+- Rarely the correct exam answer
+
+Pattern: Append-only
+When to use:
+- Immutable data
+- No updates
+Exam note:
+- Breaks with late-arriving data
+
+Pattern: Incremental (watermark)
+When to use:
+- Ordered data
+- No late arrivals
+Exam note:
+- Common trap option
+
+Pattern: MERGE (Upsert)
+When to use:
+- Late-arriving data
+- Deduplication required
+Exam note:
+- MOST CORRECT ANSWER
+
+Exam trigger words that point to MERGE:
+- Incremental + late-arriving data
+- Avoid duplicates
+- Delta tables
+- Lakehouse
+
+------------------------------------------------------------
+
+DIMENSION LOADING PATTERNS
+--------------------------
+
+SLOWLY CHANGING DIMENSIONS (SCD)
+
+Type 1:
+- Overwrite history
+- Medium exam frequency
+
+Type 2:
+- Track full history
+- HIGH exam frequency (critical)
+
+Type 3:
+- Limited history
+- Low exam frequency
+
+------------------------------------------------------------
+
+SCD TYPE 2 – REQUIRED COMPONENTS
+--------------------------------
+
+Required elements:
+- Surrogate key (primary key)
+- Natural or business key
+- EffectiveStartDate
+- EffectiveEndDate
+- CurrentRow flag (optional but common)
+
+Rules:
+- Fact tables MUST reference surrogate keys
+- NEVER use natural keys as primary keys in Type 2
+
+============================================================
+
+3) DATA PREPARATION BEST PRACTICES
+---------------------------------
+
+CORRECT LOADING ORDER (EXAM FAVORITE)
+
+Source
+  ↓
+Staging (Bronze)
+  ↓
+Transformed (Silver)
+  ↓
+Dimensions
+  ↓
+Facts
+  ↓
+Semantic Model
+
+Exam mantra:
+Load DIMENSIONS first.
+Load FACTS second.
+
+------------------------------------------------------------
+
+BEFORE LOADING FACTS
+--------------------
+
+Do:
+- Conform dimensions
+- Resolve surrogate keys
+- Validate referential integrity
+- Handle late-arriving dimensions
+
+Do NOT:
+- Load facts before dimensions
+- Apply business rules in Power BI measures
+
+============================================================
+
+4) WHERE TRANSFORMATIONS SHOULD HAPPEN
+-------------------------------------
+
+Source system:
+- Rare
+- Not preferred in exam answers
+
+Staging / Silver layer:
+- YES
+- Correct exam answer
+
+Fact tables:
+- Minimal transformations
+- Avoid heavy logic
+
+Power BI:
+- NO
+- Exam trap
+
+DP-700 rule:
+Transform data BEFORE loading dimensional tables.
+
+============================================================
+
+5) FABRIC & LAKEHOUSE–SPECIFIC KNOWLEDGE
+---------------------------------------
+
+DELTA LAKE CAPABILITIES (TESTED)
+
+MERGE INTO:
+- Handles upserts and late data
+- HIGH exam relevance
+
+OPTIMIZE / Z-ORDER:
+- Improves query performance
+- Medium exam relevance
+
+Time Travel:
+- Rollback and audit
+- Low exam relevance
+
+VACUUM:
+- File cleanup
+- Low exam relevance
+
+Key exam note:
+Only MERGE affects DATA CORRECTNESS.
+OPTIMIZE affects PERFORMANCE only.
+
+============================================================
+
+6) SCOPE AWARENESS (DP-700 SUBTLETY)
+-----------------------------------
+
+Component scopes:
+
+Lakehouse tables:
+- Workspace
+
+Delta tables:
+- Lakehouse
+
+Spark jobs:
+- Notebook
+
+Semantic model:
+- Dataset
+
+SCD logic:
+- Notebook or SQL
+
+Important:
+There is no domain-level modeling.
+Everything is workspace-centric.
+
+============================================================
+
+7) COMMON DP-700 EXAM TRAPS
+---------------------------
+
+Trap 1: Watermark equals late data handling
+- Watermarks MISS late-arriving records
+- MERGE handles late data correctly
+
+Trap 2: Natural keys in fact tables
+- Never store natural keys in facts
+- Always resolve surrogate keys
+
+Trap 3: Power BI as ETL
+- Measures are NOT transformations
+- Too late in the pipeline
+
+Trap 4: OPTIMIZE fixes data issues
+- Improves performance only
+- Does NOT deduplicate or update data
+
+============================================================
+
+8) MEMORY HOOKS
+---------------
+
+- Late data? MERGE it.
+- History needed? SCD Type 2.
+- Facts wait for dimensions.
+- Transform before you load.
+
+============================================================
+
+9) VISUAL FLOW SUMMARY
+---------------------
+
+SOURCE DATA
+     |
+STAGING (Bronze)
+     |
+TRANSFORM (Silver)
+  - Clean
+  - Deduplicate
+  - Apply business rules
+     |
+DIMENSIONS
+  - SCD Type 2
+  - Surrogate keys
+     |
+FACTS
+  - MERGE INTO
+  - Incremental
+     |
+SEMANTIC MODEL
+  - Minimal logic
+
+============================================================
+
+EXAM CONFIDENCE CHECK
+--------------------
+
+You should confidently explain:
+- Why MERGE is better than append
+- Why surrogate keys are mandatory
+- Why dimensions must load before facts
+
+If yes, you are well-prepared for this DP-700 topic.
+
+============================================================
