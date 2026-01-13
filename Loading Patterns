@@ -1,0 +1,211 @@
+DP-700 CHEAT SHEET
+Ingest & Transform Data → Design and Implement Loading Patterns
+Full & Incremental Loads (Microsoft Fabric)
+
+============================================================
+
+1) KEY CONCEPTS
+----------------
+
+FULL LOAD
+Loads the entire dataset every run.
+
+When to use:
+- Small or medium datasets
+- Daily snapshot required
+- No history needed
+- Simplicity preferred over performance
+
+Common patterns:
+- Overwrite target table
+- Truncate + insert
+
+Pros:
+- Simple
+- Deterministic results
+
+Cons:
+- Expensive for large data
+- High impact on source systems
+
+
+INCREMENTAL LOAD
+Loads only changed data since last run.
+
+Change types:
+- Inserts
+- Updates
+- (Optional) Deletes
+
+Core components:
+- Change detection mechanism
+- Stored state (watermark or version)
+- Merge logic
+
+============================================================
+
+2) INCREMENTAL LOAD PATTERNS (EXAM-CRITICAL)
+--------------------------------------------
+
+WATERMARK-BASED INCREMENTAL LOAD
+Uses timestamp or numeric column.
+
+Example:
+WHERE LastModifiedDate > @LastWatermark
+
+Requires:
+- Reliable change column
+- Persisted watermark value
+
+Exam traps:
+- Using "=" causes data loss
+- Late-arriving data can be missed
+- Does NOT capture deletes
+
+Mitigations:
+- Use overlap window (>=)
+- Combine timestamp + surrogate key
+- Periodic reconciliation
+
+
+CDC (CHANGE DATA CAPTURE)
+Tracks row-level changes at the source.
+
+Captures:
+- Inserts
+- Updates
+- Deletes
+
+Best for:
+- Late-arriving data
+- Historical updates
+- Minimal custom logic
+
+Exam rule:
+If deletes and late-arriving data exist, CDC is usually the correct answer.
+
+
+DELTA MERGE PATTERN (TARGET-SIDE)
+Used in Fabric Lakehouse Delta tables.
+
+Example:
+MERGE INTO target t
+USING source s
+ON t.id = s.id
+WHEN MATCHED THEN UPDATE
+WHEN NOT MATCHED THEN INSERT
+
+Supports:
+- Upserts
+- Soft deletes
+- Idempotent loads
+
+============================================================
+
+3) MICROSOFT FABRIC IMPLEMENTATION SCOPE
+---------------------------------------
+
+Component            | Role                                  | Scope
+-------------------- | ------------------------------------- | ----------
+Data Pipelines       | Orchestration, parameters, scheduling | Workspace
+Notebooks            | Complex logic, MERGE, CDC processing  | Workspace
+Lakehouse            | Storage + Delta tables                | Workspace
+Delta Tables         | MERGE support, ACID                   | Table-level
+Watermark Tables     | Persist state                         | Lakehouse
+
+Important:
+- Fabric does NOT auto-track watermarks
+- Incremental logic must be explicitly designed
+
+============================================================
+
+4) CONFIGURATION & SETTINGS TO REMEMBER
+---------------------------------------
+
+Watermark storage options:
+- Dedicated metadata table
+- Lakehouse Delta table
+- Pipeline parameters passed between activities
+
+Common incremental settings:
+- Use MERGE instead of append when updates exist
+- Partitioning improves performance, not correctness
+- Use soft-delete flag to handle deletes
+
+============================================================
+
+5) EXAM DECISION TABLE (MEMORIZE)
+--------------------------------
+
+Requirement                → Best Choice
+------------------------------------------------
+Small dataset              → Full load
+Daily snapshot only        → Full overwrite
+New + updated rows         → Watermark incremental
+Deletes required           → CDC
+Late-arriving data         → CDC
+Upserts                    → Delta MERGE
+Minimal source impact      → Incremental load
+Simplicity preferred       → Full load
+
+============================================================
+
+6) COMMON DP-700 EXAM TRAPS
+---------------------------
+
+Trap 1:
+LastModifiedDate > watermark
+→ Misses rows with same timestamp
+
+Trap 2:
+Using append for updates
+→ Causes duplicates
+
+Trap 3:
+Incremental is always better
+→ False; full load may be correct
+
+Trap 4:
+Fabric auto-handles incremental loads
+→ False; logic is manual
+
+============================================================
+
+7) VISUAL FLOW SUMMARY
+---------------------
+
+SOURCE SYSTEM
+     |
+     | (CDC or Watermark)
+     v
++------------------+
+| Data Pipeline    |  Orchestration, parameters
++------------------+
+     |
+     v
++------------------+
+| Notebook         |  MERGE / CDC logic
++------------------+
+     |
+     v
++------------------+
+| Lakehouse Delta  |  ACID, MERGE, soft delete
++------------------+
+     |
+     v
++------------------+
+| Reporting Layer  |
++------------------+
+
+============================================================
+
+8) FINAL EXAM MINDSET
+--------------------
+
+Do not over-engineer.
+Match the load pattern to the business requirement.
+Deletes + late data = CDC.
+Updates = MERGE.
+Simplicity = Full overwrite.
+
+============================================================
