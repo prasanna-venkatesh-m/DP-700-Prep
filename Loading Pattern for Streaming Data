@@ -1,0 +1,210 @@
+DP-700 CHEAT SHEET
+Design and Implement a Loading Pattern for Streaming Data
+(Microsoft Fabric / Azure Streaming Context)
+
+============================================================
+
+1) KEY CONCEPTS
+---------------
+
+Streaming data:
+- Continuous flow of data generated in real time
+- Examples: IoT telemetry, clickstreams, application logs
+
+Ingestion:
+- Process of bringing streaming data into a platform for processing
+
+Near-real-time analytics:
+- Data processed as it arrives
+- Latency measured in seconds or minutes
+
+Batch vs Streaming:
+- Batch: scheduled, large chunks of data
+- Streaming: continuous ingestion, micro-batches or event-driven
+
+Event Hub:
+- General-purpose event ingestion and buffering
+- Handles very high throughput
+
+IoT Hub:
+- Device-focused ingestion for IoT telemetry
+- Built on Event Hub architecture
+
+Stream Analytics:
+- Real-time SQL-based stream processing
+- Supports windowing and simple transformations
+
+Databricks Structured Streaming:
+- Spark-based streaming framework
+- Supports complex transformations and aggregations
+- Uses micro-batch processing
+
+Synapse Pipelines / ADF:
+- Batch-oriented orchestration
+- NOT designed for low-latency streaming
+
+============================================================
+
+2) COMMON STREAMING LOADING PATTERNS
+-----------------------------------
+
+Pattern: Event Hub → Stream Analytics → Synapse
+Description:
+- Events ingested into Event Hub
+- Transformed in real time using Stream Analytics
+- Loaded into Synapse or Data Lake
+
+Pros:
+- Low latency
+- Easy to configure
+- Scales well
+
+Cons / Exam traps:
+- Limited complex transformation support
+
+
+Pattern: Event Hub / IoT Hub → Databricks Structured Streaming → Synapse
+Description:
+- Events ingested into Event Hub or IoT Hub
+- Processed using Spark Structured Streaming
+- Written to Synapse or Lakehouse
+
+Pros:
+- Very flexible
+- Supports complex logic and windowed aggregations
+
+Cons / Exam traps:
+- Requires Spark/Databricks knowledge
+- Must configure checkpointing correctly
+
+
+Pattern: Batch-based ingestion
+Description:
+- Use ADF or Synapse pipelines on a schedule
+
+Pros:
+- Simple
+- Good for infrequent large data loads
+
+Cons / Exam traps:
+- NOT real-time
+- High latency
+- Incorrect for streaming scenarios
+
+============================================================
+
+3) CONFIGURATIONS / SETTINGS (EXAM-RELEVANT)
+--------------------------------------------
+
+Event Hub / IoT Hub:
+- Partition count controls parallelism
+- Throughput units control ingestion rate
+- Retention period buffers events
+- Optional capture to Data Lake
+
+Stream Analytics:
+- Inputs: Event Hub or IoT Hub
+- Outputs: Synapse, Data Lake, Power BI
+- Windowing:
+  - Tumbling
+  - Hopping
+  - Sliding
+- Checkpointing for fault tolerance
+
+Databricks Structured Streaming:
+- Checkpoint location REQUIRED for reliability
+- Trigger interval:
+  - Micro-batch
+  - Continuous
+- Output modes:
+  - Append
+  - Update
+  - Complete
+- Sink: Synapse, Delta Lake, Lakehouse
+
+============================================================
+
+4) SCOPE AND DOMAIN NOTES
+------------------------
+
+Workspace:
+- Synapse pipelines can orchestrate
+- Mostly batch-oriented
+
+Notebook / Databricks:
+- Best for complex streaming transformations
+- Supports windowing and aggregations
+
+Domain usage:
+- IoT telemetry
+- Web clickstream analytics
+- Real-time monitoring
+- High-throughput event processing
+
+============================================================
+
+5) EXAM TRAPS AND TIPS
+----------------------
+
+Trap 1: Using ADF or Synapse pipelines for real-time streaming
+- Pipelines are batch-oriented
+- Incorrect if question mentions "streaming" or "near real-time"
+
+Trap 2: Event Hub vs IoT Hub confusion
+- IoT Hub = device telemetry
+- Event Hub = general event ingestion
+
+Trap 3: Structured Streaming is not truly continuous
+- Uses micro-batches
+- ACCEPTABLE for near real-time scenarios
+
+Trap 4: Latency vs transformation complexity
+- Stream Analytics = low latency, simple logic
+- Databricks = complex logic, slightly higher latency
+
+Trap 5: Exactly-once semantics ignored
+- Checkpointing is required for reliability
+
+Trap 6: Output mode confusion
+- Append vs update can affect correctness
+
+Trap 7: Pushing directly into Synapse
+- Streaming data typically requires buffering
+- Event Hub or IoT Hub should be included
+
+============================================================
+
+6) QUICK VISUAL SUMMARY
+----------------------
+
+IoT / Event Sources
+        |
+        v
+Event Hub / IoT Hub
+(Buffer and scale)
+        |
+        v
+Stream Analytics OR Databricks
+(Real-time transformation)
+        |
+        v
+Synapse / Lakehouse
+(Storage and analytics)
+
+Key roles:
+- Event Hub / IoT Hub = ingestion and buffering
+- Stream Analytics / Databricks = real-time processing
+- Synapse / Lakehouse = storage and analytics
+
+============================================================
+
+EXAM MINDSET
+------------
+
+- Streaming implies near real-time, not batch
+- Pipelines are rarely correct for streaming
+- Buffer first, then process
+- Choose Stream Analytics for simplicity
+- Choose Databricks for complexity
+
+============================================================
