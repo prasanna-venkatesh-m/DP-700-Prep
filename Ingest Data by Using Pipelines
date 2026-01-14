@@ -1,0 +1,95 @@
+DP-700 Cheat Sheet: Ingest Data by Using Pipelines
+
+--------------------------------------------------------------------
+
+1. Key Concepts
+
+Concept                     | Description                                 | Use Case / Notes
+--------------------------- | ------------------------------------------- | --------------------------------------------------------------------
+Pipeline                    | Logical workflow to move and transform data | Can contain activities like Copy Data, Data Flow, ForEach, etc.
+Copy Data activity          | Moves data from source → sink               | Supports batch, parallel copy, staging for large datasets
+Mapping Data Flow           | Visual ETL transformation                   | Supports schema drift, column mapping, derived columns, aggregations
+Triggers                    | Automates pipeline execution                | Types: Schedule, Tumbling window, Event-based
+Event-based trigger         | Fires on blob/file creation                 | Real-time ingestion of new files
+Tumbling window trigger     | Scheduled, fixed interval                   | Ensures exactly-once processing for each window
+Get Metadata activity       | Checks file existence, size, schema         | Useful to skip already ingested files
+ForEach activity            | Loops over items (files, tables)            | Often combined with Copy Data or Data Flow
+Retry policy                | Automatic retry on failure                  | Set per activity (e.g., Copy Data)
+Schema drift                | Handles dynamic or changing schemas         | Use in Mapping Data Flow for JSON/CSV ingestion
+
+--------------------------------------------------------------------
+
+2. Configurations & Settings
+
+Feature                       | Key Settings / Options                                                                 | Exam Tip
+----------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------
+Copy Data activity            | Source dataset/path, Sink dataset/table, Parallel copy, Staging                      | Check performance settings for large datasets
+Mapping Data Flow             | Column mapping, Derived columns, Aggregates, Schema drift                              | Debug mode = development only, not production
+Triggers                      | Schedule/Tumbling: recurrence, start/end time; Event: blob path, filter               | Pausing/resuming triggers doesn’t stop running pipelines
+Retry & Error Handling        | Retry count, interval, skip on failure                                                 | Combine with Get Metadata or If Condition for smart skipping
+Parallelism / Performance     | Data partitioning, staging, parallel threads                                           | Key for big datasets (>100GB)
+
+--------------------------------------------------------------------
+
+3. Scope (Domain vs Workspace vs Notebook)
+
+Scope         | Purpose                                | Example
+------------- | -------------------------------------- | -----------------------------------------------------
+Domain        | Enterprise data ingestion strategy     | Scheduled vs event-based ingestion, monitoring SLA
+Workspace     | Azure Data Factory / Synapse workspace | Pipelines, triggers, linked services
+Notebook      | Optional, Databricks / Synapse Spark   | Advanced transformation/ML; not for low-code ingestion
+
+--------------------------------------------------------------------
+
+4. Exam Traps & Tips
+
+- Event triggers are not scheduled → run on file arrival
+- Tumbling window = exactly-once processing, ideal for SLAs
+- Debug mode ≠ production → do not select for operational requirements
+- Single-thread Copy Data is slow for large datasets → use parallel copy + staging
+- Upsert in sink = row-level merge, not file-level ingestion control
+- Use Get Metadata + If Condition to skip already ingested files
+- Multiple triggers can invoke the same pipeline simultaneously → pipelines are stateless
+- Map data flows for transformations; Copy Data for straight ingestion
+
+--------------------------------------------------------------------
+
+5. Quick Visual Summary
+
+           +-----------------+
+           |  Trigger        |
+           |  (Event/Sched)  |
+           +--------+--------+
+                    |
+                    v
+           +-----------------+
+           |   Pipeline      |
+           +-----------------+
+           | Activities:     |
+           | - Copy Data     | --> Sink (SQL, Synapse, etc.)
+           | - Data Flow     | --> Transform
+           | - ForEach       | --> Loop over files/tables
+           | - Get Metadata  | --> Check existing files
+           +-----------------+
+                    |
+                    v
+           +-----------------+
+           |   Monitoring    |
+           | - Retry Policy  |
+           | - Alerts        |
+           +-----------------+
+
+Key Points:
+- Trigger → Pipeline → Activities → Monitoring
+- Parallelism & staging critical for large datasets
+- Schema drift in Mapping Data Flow handles dynamic JSON/CSV
+
+--------------------------------------------------------------------
+
+Bottom Line for DP-700 Exam:
+
+- Pipelines orchestrate ingestion and transformation
+- Use Copy Data for simple movement, Mapping Data Flow for ETL
+- Triggers: Event-based for real-time, Tumbling window for exactly-once
+- Use Get Metadata + If Condition to prevent duplicate ingestion
+- Parallelism, staging, and retries are exam-relevant keywords
