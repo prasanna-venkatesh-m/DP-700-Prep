@@ -1,0 +1,155 @@
+Got it! Let’s create a comprehensive cheat sheet for the DP-700 topic:
+Ingest and Transform Batch Data – Implement Mirroring
+
+This cheat sheet covers key concepts, configurations, scope, exam traps/tips,
+and a visual summary to help you confidently answer scenario questions.
+
+--------------------------------------------------------------------
+
+DP-700: Ingest & Transform Batch Data – Implement Mirroring Cheat Sheet
+
+--------------------------------------------------------------------
+
+1. Key Concepts
+
+Data Mirroring
+- Keeping two datasets in sync so that inserts, updates, and deletes
+  in the source are reflected exactly in the target.
+
+Batch vs Streaming
+- Batch: Data copied at intervals (daily/nightly). Suitable for large datasets.
+- Streaming: Near real-time updates. NOT the focus for this DP-700 topic.
+
+Full Load vs Incremental Load
+- Full Load: Replaces entire target table each run.
+  - Simple
+  - Inefficient for large datasets
+- Incremental Load: Copies only new or changed data.
+  - Efficient
+  - Requires change detection
+
+Change Tracking / CDC (Change Data Capture)
+- Tracks inserts, updates, and deletes in source tables.
+- Essential for efficient incremental mirroring.
+
+Idempotent Operations
+- Re-running the pipeline does NOT corrupt data.
+- Common example: SQL MERGE statements.
+
+--------------------------------------------------------------------
+
+2. Tools and Approaches
+
+Tool / Method
+- Azure Data Factory (ADF) / Synapse Pipelines
+  Description: Orchestrates batch ETL/ELT workflows
+  When to Use: Most common choice for batch mirroring
+
+- COPY INTO / PolyBase / Bulk Insert
+  Description: Efficient large-scale data loading
+  When to Use: Large datasets where performance matters
+
+- MERGE Statement (SQL)
+  Description: Handles inserts, updates, deletes in one operation
+  When to Use: Incremental mirroring
+
+- Change Tracking / CDC
+  Description: Tracks source changes for incremental loads
+  When to Use: Efficient mirroring without full reloads
+
+- External Tables / Linked Servers
+  Description: Query source data directly
+  When to Use: Small datasets or ad-hoc scenarios
+
+--------------------------------------------------------------------
+
+3. Configurations / Settings
+
+Source Setup
+- Enable Change Tracking or CDC on source SQL tables
+- Define primary keys (required for MERGE logic)
+
+Target Setup (Synapse / Azure SQL)
+- Ensure schema matches source
+- Use staging tables for incremental processing
+
+ADF / Synapse Pipeline Settings
+- Copy Activity for full or incremental loads
+- Column mapping between source and target
+- Sink settings:
+  - Use Upsert / Merge mode
+- Scheduling:
+  - Daily / nightly batch runs
+
+--------------------------------------------------------------------
+
+4. Scope
+
+Domain Level
+- Mirroring is mainly for analytics/reporting
+- Not intended for transactional workloads
+
+Workspace Level
+- Pipelines, datasets, and linked services configured
+  in Synapse or ADF workspace
+
+Notebook Level
+- PySpark or Spark SQL can be used for transformations
+- Often used before loading into final mirrored tables
+
+--------------------------------------------------------------------
+
+5. Exam Traps & Tips
+
+Trap #1: Streaming vs Batch
+- If question says scheduled/daily, avoid streaming solutions
+  like Event Hubs or Stream Analytics
+
+Trap #2: Incremental vs Full Load
+- Full load is simple but risky for large tables
+- Incremental load required when deletes must be tracked
+
+Trap #3: Merge Confusion
+- Use MERGE for idempotent upsert
+- Handles inserts, updates, and deletes
+
+Trap #4: Change Tracking vs CDC
+- CDC: more detailed
+- Change Tracking: lightweight
+- Both support incremental mirroring
+
+Tip
+- Think: Source → Staging → Target
+- Apply MERGE logic at the target
+
+--------------------------------------------------------------------
+
+6. Visual Summary
+
+[ Source SQL Table ]
+        |
+        | (CDC / Change Tracking)
+        v
+[ ADF / Synapse Pipeline ]
+        |
+        | (Staging Table)
+        v
+[ Target Synapse Table ]
+        |
+        | MERGE (inserts, updates, deletes)
+        v
+     Mirror Maintained
+
+Notes:
+- Staging table is temporary
+- MERGE ensures idempotency
+- Schedule is batch-based (daily/nightly)
+
+--------------------------------------------------------------------
+
+Bottom Line for the Exam
+
+- Batch mirroring = Scheduled copy + MERGE using CDC/change tracking
+- Full loads are simple but inefficient
+- Key exam keywords:
+  MERGE, incremental, staging, idempotent, CDC, batch schedule
