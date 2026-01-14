@@ -1,0 +1,96 @@
+Perfect! Let’s create a comprehensive cheat sheet for “Ingest and transform batch data – Create and manage shortcuts to data” for DP-700. This is broken into clear sections, highlights exam traps, and includes a simple visual diagram for quick revision.
+
+--------------------------------------------------------------------
+
+DP-700 Cheat Sheet: Ingest & Transform Batch Data – Create and Manage Shortcuts
+
+--------------------------------------------------------------------
+
+1. Key Concepts
+
+Concept                 | Explanation
+----------------------- | -------------------------------------------------------------------------
+Shortcut                | A reference to an existing dataset in the same or another Synapse workspace. Does NOT copy the data.
+Purpose                 | - Avoid duplicating large datasets
+                        | - Enable multiple teams/workspaces to share datasets
+                        | - Maintain a single source of truth
+Supported Workloads     | - Serverless SQL Pools
+                        | - Spark notebooks
+                        | - Shortcut is agnostic to the compute engine
+Schema behavior          | - Shortcuts preserve the schema of the source dataset
+                        | - If the source schema changes, queries may fail until updated
+
+--------------------------------------------------------------------
+
+2. Scope & Permissions
+
+Scope                    | Behavior
+------------------------ | -------------------------------------------------------------------------
+Workspace                | Shortcuts exist within a workspace but can reference data from other workspaces
+Domain (data source)     | Shortcuts point to data in Azure Data Lake, Blob Storage, or another workspace
+Notebook / SQL           | Shortcuts can be queried directly in Spark notebooks or serverless SQL pools
+Permissions              | Users need:
+                        | 1. Workspace access to see the shortcut
+                        | 2. Storage read permissions to query the data
+
+Exam Trap:
+- Workspace access alone is NOT sufficient
+- Storage-level permissions are always required
+
+--------------------------------------------------------------------
+
+3. Configurations / Settings
+
+Creating a Shortcut:
+1. Open Synapse Studio
+2. Go to Data hub
+3. Select a folder or dataset
+4. Click “New shortcut”
+5. Choose target workspace (same or different)
+6. Assign a folder location in the workspace
+
+Managing Shortcuts:
+- Move: Reorganize within workspace folders
+- Rename: Safe; does not affect source data
+- Delete: Removes shortcut only; source data remains untouched
+- Querying: Behaves like original dataset; schema changes can break queries
+
+Access Considerations:
+- Shortcut does NOT replicate data
+- Queries still read from source storage
+- Cross-workspace access may incur egress or compute costs
+
+--------------------------------------------------------------------
+
+4. Exam Traps & Tips
+
+Trap / Tip                     | Explanation
+------------------------------ | -------------------------------------------------------------------------
+Physical copy vs reference     | Shortcut is NEVER a copy; replication options are incorrect
+Permissions                    | Workspace access ≠ storage access
+Schema changes                 | Schema mirrors source; changes can break queries
+Cross-workspace shortcuts      | Fully supported with correct permissions on both sides
+Supported compute              | Works with Spark, serverless SQL, and Synapse pipelines
+
+--------------------------------------------------------------------
+
+5. Quick Visual Summary
+
+[ Source Dataset ]  <--storage access-->  [ Shortcut in Synapse Workspace ]
+
+Key Points:
+- Shortcut points to source (no copy)
+- Schema preserved
+- Queried via Spark or SQL
+- Requires both workspace and storage permissions
+- Move / rename / delete shortcut without touching source data
+
+--------------------------------------------------------------------
+
+High-Yield Points for DP-700 Exam
+
+1. Shortcuts are references, not physical copies
+2. Storage permissions are mandatory
+3. Schema changes in source can break queries
+4. Cross-workspace shortcuts reduce cost and duplication
+5. Deleting or renaming a shortcut does NOT affect source data
