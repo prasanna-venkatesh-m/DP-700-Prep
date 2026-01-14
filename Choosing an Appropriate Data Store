@@ -1,0 +1,134 @@
+Perfect! Here’s a comprehensive cheat sheet for DP-700 – Ingest & Transform Batch Data: Choosing an Appropriate Data Store. I’ve organized it for quick exam revision, including key concepts, practical tips, exam traps, and a visual summary.
+
+--------------------------------------------------------------------
+
+DP-700 Cheat Sheet: Ingest & Transform Batch Data – Choosing Data Stores
+
+--------------------------------------------------------------------
+
+1. Key Concepts
+
+Concept                         | Notes
+------------------------------- | ---------------------------------------------------------------
+Batch Data                      | Data ingested periodically (e.g., nightly, weekly), often large volume.
+Structured Data                 | Rows & columns (CSV, SQL tables). Best suited for SQL-based analytics.
+Semi-Structured Data            | JSON, Parquet, XML. Can be queried but not fully relational.
+Unstructured Data               | Images, video, logs. Needs storage-optimized solutions.
+Raw Data Storage                | Cheap, durable storage for ingestion before transformation. Usually in Data Lake or Blob Storage.
+Analytics / Reporting Store     | Optimized for querying & aggregations. Usually Synapse (dedicated or serverless) or SQL Database for smaller datasets.
+
+--------------------------------------------------------------------
+
+2. Data Store Comparison
+
+Data Store                                   | Use Case
+------------------------------------------- | -------------------------------------------------------------
+Azure SQL Database                           | Small to medium structured data; transactional or small-scale analytics
+Azure Synapse Analytics – Dedicated SQL Pool | Large structured datasets, predictable analytics
+Azure Synapse – Serverless SQL Pool          | Ad-hoc querying of structured/semi-structured data in Data Lake
+Azure Data Lake Storage Gen2                 | Raw storage for structured/semi/unstructured data
+Azure Cosmos DB                              | Low-latency, globally distributed, NoSQL
+Azure Blob Storage                           | Cheap raw storage
+
+Pros / Cons / Exam Tips
+
+Azure SQL Database
+- Pros: Fully managed, supports T-SQL, auto-scale
+- Cons: Expensive at large scale, poor for massive batch ingestion
+- Exam Tip: Good for small datasets + frequent ad-hoc queries
+
+Synapse Dedicated SQL Pool
+- Pros: Scales massively, optimized for batch ingestion, fast aggregations
+- Cons: Fixed compute cost (expensive if underused)
+- Exam Tip: Best for millions of rows batch analytics
+
+Synapse Serverless SQL Pool
+- Pros: Pay-per-query, no fixed compute
+- Cons: Slower for repeated heavy queries
+- Exam Tip: Use for ad-hoc queries on raw/semi-structured data
+
+Data Lake Storage Gen2
+- Pros: Cheap, scalable, hierarchical namespace
+- Cons: Not optimized for analytics
+- Exam Tip: Always pair with Synapse or serverless SQL for querying
+
+Azure Cosmos DB
+- Pros: Excellent for high-speed reads/writes, semi-structured JSON
+- Cons: Costly for large-scale batch analytics
+- Exam Tip: Avoid for massive batch ingestion
+
+Azure Blob Storage
+- Pros: Extremely cheap
+- Cons: No hierarchical namespace
+- Exam Tip: Raw archival only; Data Lake preferred
+
+--------------------------------------------------------------------
+
+3. Data Flow / Scope
+
+Layer                             | Scope / Domain
+-------------------------------- | ---------------------------------------------------------------
+Raw Data Layer                    | Data Lake (or Blob)
+Transform / Aggregation Layer     | Synapse Analytics / SQL Database
+Ad-hoc Query Layer                | Serverless SQL pool or Synapse Dedicated Pool
+Workspace / Notebook              | Optional for transformations, testing pipelines
+
+Notes:
+- Raw layer stores all incoming batch files
+- Transform layer creates analytics-ready tables
+- Ad-hoc layer allows analysts to query without touching raw data
+
+--------------------------------------------------------------------
+
+4. Key Configurations / Settings
+
+Synapse Dedicated SQL Pool
+- Scale using DWU (Data Warehouse Units)
+- Use clustered columnstore indexes for large batch tables
+- Use CTAS (Create Table As Select) for fast transformations
+
+Synapse Serverless SQL Pool
+- Query Parquet, CSV, JSON directly from Data Lake
+- No provisioning required
+- Pay per query
+
+Data Lake Storage Gen2
+- Hierarchical namespace enabled
+- Folder-per-day/month for batch partitioning
+- Supports ACLs for fine-grained access control
+
+--------------------------------------------------------------------
+
+5. Exam Traps & Tips
+
+1. Structured does NOT mean small dataset
+2. Small batches → SQL Database may be cheaper
+3. Semi-structured JSON → Data Lake + Serverless SQL (not Cosmos DB)
+4. Dedicated pool is for heavy, predictable workloads
+5. Always separate raw storage from analytics store
+6. Ad-hoc raw queries → Serverless SQL pool
+7. Cost-sensitive → Data Lake + Serverless
+8. Millions of rows/day → Synapse Dedicated Pool
+
+--------------------------------------------------------------------
+
+6. Quick Visual Summary
+
+[ Raw Data Layer ]
+        |
+        | (Batch ingestion)
+        v
+[ Data Lake Storage Gen2 / Blob Storage ]
+        |                \
+        |                 \
+        v                  v
+[ Serverless SQL Pool ]   [ Dedicated SQL Pool / SQL Database ]
+        |                       |
+        |                       |
+Ad-hoc queries         Aggregated reporting, dashboards
+
+Key Takeaways:
+- Data Lake = raw, cheap storage
+- Serverless SQL = flexible ad-hoc queries
+- Dedicated SQL Pool = large-scale analytics
+- SQL Database = small datasets, frequent queries
