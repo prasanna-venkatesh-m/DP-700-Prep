@@ -1,0 +1,125 @@
+DP-700 Cheat Sheet: Ingest and Transform Batch Data – Continuous Integration from OneLake
+
+====================================================================
+
+1. Key Concepts
+
+OneLake
+- Microsoft Fabric’s unified storage lake for all data (Lakehouse, Warehouse, Notebooks).
+- Exam trap: Do not confuse OneLake with external sources. Continuous ingestion behaves differently for internal OneLake data vs external blob storage.
+
+Continuous Ingestion (CI)
+- Event-driven ingestion that automatically detects new or updated files in a OneLake folder.
+- Exam trap: CI is NOT scheduled ingestion. It is near real-time.
+
+Batch Ingestion
+- Periodic ingestion of data (hourly, daily, etc.).
+- Exam tip: Pipelines can do batch ingestion, but CI is preferred when near-real-time ingestion is required.
+
+Incremental vs Full Load
+- Incremental load: Only new or changed data.
+- Full load: Reload entire dataset.
+- Exam trap: CI automatically detects incremental data. You do NOT configure manual incremental refresh for CI.
+
+Schema Evolution
+- Handling new columns or schema changes in source data.
+- Exam trap: Schema evolution is NOT automatic in CI. Manual mapping or transformations are required.
+
+File Deduplication / Watermarking
+- CI tracks ingested files to avoid duplicates.
+- Exam trap: CI usually prevents duplicates, but overwritten files with the same name may trigger re-ingestion.
+
+====================================================================
+
+2. Configurations / Settings for Continuous Ingestion in OneLake
+
+Source Location
+- OneLake container or folder.
+- Must point to the folder containing CSV, Parquet, or JSON files.
+
+File Format
+- CSV, Parquet, JSON, etc.
+- Exam trap: Incorrect format or schema mismatch causes ingestion failure.
+
+Target Table
+- Lakehouse table.
+- Target table must exist or be auto-created if supported.
+- Proper permissions are required.
+
+Watermarking / Tracking
+- Used to prevent duplicate ingestion.
+- CI typically tracks file name and timestamp.
+- Exam trap: File overwrite may be detected as a new file.
+
+Trigger Type
+- Continuous or scheduled.
+- Exam tip: For CI, ALWAYS select continuous. Scheduled means batch ingestion.
+
+Mapping / Schema Handling
+- Column mapping configuration.
+- Required when schema changes.
+- Exam trap: CI does NOT auto-evolve schema.
+
+====================================================================
+
+3. Scope: Domain vs Workspace vs Notebook
+
+Domain
+- Organization-level storage shared across multiple workspaces.
+- Continuous ingestion can source data from domain-level OneLake containers.
+
+Workspace
+- Isolated environment for a team or project.
+- CI pipelines are usually created at the workspace level for ownership and security.
+
+Notebook
+- Used for interactive ETL and transformations.
+- Can read from OneLake and write to a Lakehouse.
+- Exam trap: Not ideal for full production-grade CI pipelines.
+
+====================================================================
+
+4. Exam Traps and Tips
+
+- CI is NOT scheduled ingestion.
+  If the question mentions fixed intervals (every 15 minutes, hourly), it is batch ingestion, not CI.
+
+- Schema evolution is NOT automatic.
+  If new columns appear, manual mapping or transformation is required.
+
+- Duplicate handling is not perfect.
+  CI generally avoids duplicates, but overwritten files with the same name can be reprocessed.
+
+- Incremental refresh is NOT required for CI.
+  Incremental refresh mainly applies to datasets and reports, not ingestion pipelines.
+
+- Permissions matter.
+  The service principal or managed identity must have:
+  - Read access to the OneLake source folder
+  - Write access to the target Lakehouse
+
+====================================================================
+
+5. Visual Flow Summary
+
+OneLake Folder (CSV / Parquet / JSON files)
+        |
+        | Continuous Ingestion (event-driven)
+        v
+Fabric Lakehouse Table
+- Incremental load
+- File tracking / deduplication
+        |
+        v
+Optional Transformations
+- Pipelines
+- Notebooks
+
+Notes:
+- CI automatically detects new or changed files.
+- Schema changes require manual handling.
+- Incremental refresh configuration is not needed for CI ingestion.
+
+====================================================================
+
+End of Cheat Sheet
