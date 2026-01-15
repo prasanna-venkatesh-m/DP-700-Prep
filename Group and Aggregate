@@ -1,0 +1,186 @@
+DP-700 Cheat Sheet
+Ingest & Transform Batch Data – Group and Aggregate
+
+====================================================================
+
+1) Key Concepts (EXAM CRITICAL)
+
+What “Group and Aggregate” Means in DP-700
+
+- Reducing raw batch data into summarized datasets
+- Typical use cases:
+  - Daily or monthly totals
+  - Counts, averages, min/max
+  - Business KPIs (sales per product, revenue per region)
+
+Core Aggregation Operations
+- SUM: Total sales
+- COUNT: Number of records
+- AVG: Average order value
+- MIN / MAX: Price ranges
+- DISTINCT COUNT: Unique users
+
+====================================================================
+
+2) Where Aggregations Happen in Fabric (VERY IMPORTANT)
+
+Spark Notebook (Lakehouse)
+- Best for very large datasets
+- Handles complex transformations
+- Highly scalable and distributed
+- Writes results to Delta tables
+
+Example pattern:
+- Group by productId and date
+- Aggregate total sales
+
+Notes:
+- Preferred when data volume is large
+- Most exam-safe option for heavy aggregation
+
+--------------------------------------------------------------------
+
+Dataflows Gen2 (Power Query)
+
+- Best for batch ingestion from files or SaaS sources
+- Low-code transformations
+- Supports early aggregation
+
+Exam Rule:
+If Dataflows Gen2 is used in ingestion, perform aggregation there instead of later.
+
+--------------------------------------------------------------------
+
+SQL Analytics Endpoint
+
+- Best for simple, reporting-oriented aggregations
+- Suitable for smaller datasets or post-load analysis
+
+Not ideal for:
+- Heavy ingestion-time transformations
+- Large-scale batch aggregation
+
+--------------------------------------------------------------------
+
+Pandas
+
+- Runs on the driver node only
+- Not scalable
+- Almost always the wrong answer in DP-700
+
+====================================================================
+
+3) Performance and Optimization Concepts
+
+Shuffling (HIGH EXAM FREQUENCY)
+
+- GROUP BY operations cause data shuffles
+- Shuffles worsen when:
+  - Columns have high cardinality
+  - Data is skewed
+
+Data Skew
+
+- Uneven data distribution
+- Example: one product represents 90 percent of sales
+- Causes slow and imbalanced Spark jobs
+
+Optimization Techniques
+- Use approximate aggregations for large datasets
+- Apply proper partitioning for reads
+- Avoid collect() on large datasets
+- Use Delta format for performance and reliability
+
+====================================================================
+
+4) Storage and Scope (EXAM TRAP ZONE)
+
+Object Scope Comparison
+
+Temporary View
+- Scope: Notebook session
+- Persistent: No
+- Shareable: No
+
+DataFrame
+- Scope: Notebook
+- Persistent: No
+- Shareable: No
+
+Lakehouse Table
+- Scope: Workspace
+- Persistent: Yes
+- Shareable: Yes
+
+Delta Table
+- Scope: Workspace
+- Persistent: Yes
+- Shareable: Yes
+
+Golden Rule:
+If multiple teams or workspaces need the data, store it as a Lakehouse (Delta) table.
+
+====================================================================
+
+5) Configuration and Settings to Know
+
+Writing Aggregated Data
+- Use Delta format
+- Use overwrite or merge depending on scenario
+- Save as a managed Lakehouse table
+
+Partitioning
+- Common partition column: date
+- Improves read performance
+- Does NOT eliminate shuffle during aggregation
+
+====================================================================
+
+6) Common Exam Traps (MEMORIZE)
+
+Wrong Choices
+- Using Pandas for large data
+- Calling collect() before aggregation
+- Using temporary views for shared data
+- Aggregating after loading raw data when Dataflows Gen2 exists
+- Assuming Delta automatically fixes performance issues
+
+Correct Patterns
+- Aggregate early
+- Use Spark-native functions
+- Persist results in Lakehouse tables
+- Use approximate functions at scale
+
+====================================================================
+
+7) Visual Summary (Quick Revision)
+
+Batch Data Source
+(CSV / Parquet / SaaS)
+          |
+-------------------------
+| Dataflows Gen2       |  <- Early aggregation (BEST)
+-------------------------
+          |
+    Lakehouse (Delta)
+          |
+-------------------------
+| Spark Notebook       |  <- Heavy aggregation
+-------------------------
+          |
+   Aggregated Tables
+ (Shared and Persistent)
+
+====================================================================
+
+8) Last-Minute Exam Tips
+
+- “Hundreds of millions of rows” -> Spark
+- “Ingestion pipeline” -> Dataflows Gen2
+- “Multiple workspaces” -> Lakehouse table
+- Pandas mentioned -> likely incorrect
+- Performance issue with GROUP BY -> think shuffle or skew
+
+====================================================================
+
+End of Cheat Sheet
