@@ -1,0 +1,176 @@
+DP-700 Cheat Sheet: Ingest and Transform Batch Data (Power Query, PySpark, SQL, KQL)
+
+====================================================================
+
+1) Power Query (M) – ETL / Pre-load Cleaning
+
+Key Concepts
+- Used for batch data ingestion and transformation in Power BI and Fabric Dataflows.
+- Handles files, databases, APIs.
+- Uses M language for shaping data (filter, join, dedupe, calculate).
+
+Common Transformations
+- Combine multiple files: Combine Files (vertical append of CSV/Excel files)
+- Standardize column names: Rename Columns
+- Promote headers: Promote Headers (first row becomes column names)
+- Remove duplicates: Remove Duplicates (based on key columns)
+- Handle missing values: Fill Down / Replace Values (optional)
+- Calculated columns: Custom Column using M expressions
+
+Scope / Usage
+- Workspace / Dataflow: Shared transformations across reports
+- Notebook: Not typical for Power Query
+- Best used for schema standardization, cleansing, and combining files
+
+Exam Traps
+- Merge Queries = join (horizontal), Combine Files = append (vertical)
+- Forgetting Promote Headers after combining files
+- Assuming Fill Down is mandatory (it is optional)
+
+====================================================================
+
+2) PySpark (Apache Spark) – Batch Transformations
+
+Key Concepts
+- Designed for large-scale batch processing.
+- Lazy evaluation: transformations run only when an action is triggered.
+- Supports joins, aggregations, window functions, filtering.
+
+Common Patterns
+- Aggregation:
+  df.groupBy("col").agg(sum("amount").alias("Total"))
+- Filter after aggregation:
+  df.filter("Total > 1000")
+- Remove duplicates:
+  df.dropDuplicates(["TransactionID"])
+- Window functions:
+  Use Window.partitionBy().orderBy() with row_number()
+
+Scope / Usage
+- Notebook (Fabric / Synapse / Databricks): Primary environment
+- Dataflows: Not ideal for heavy transformations
+
+Exam Traps
+- Forgetting alias() after aggregation
+- Filtering using original column name after aggregation
+- Case sensitivity: groupBy != groupby
+
+====================================================================
+
+3) SQL (Synapse / SQL Pool) – Batch Deduplication & Aggregation
+
+Key Concepts
+- Used for structured, post-load transformations.
+- Best for deduplication, aggregation, and standardization.
+
+Common Patterns
+- Deduplication (keep latest record):
+  ROW_NUMBER() OVER (PARTITION BY TransactionID ORDER BY SaleDate DESC)
+- Aggregation:
+  GROUP BY with SUM, AVG, COUNT
+- Date standardization:
+  CONVERT(date, ColumnName)
+- Staging:
+  Use CTEs (WITH clause) or temp tables
+
+Scope / Usage
+- SQL Pool for warehouse-style batch transformations
+- Often complements Power Query or PySpark
+
+Exam Traps
+- Using DISTINCT instead of ROW_NUMBER() for deduplication
+- GROUP BY drops non-aggregated columns
+- Ignoring indexing and performance considerations
+
+====================================================================
+
+4) KQL (Kusto Query Language) – Batch Aggregation / Time-Series
+
+Key Concepts
+- Optimized for logs, telemetry, and IoT data.
+- Strong support for time-based aggregation.
+
+Common Patterns
+- Time-based aggregation:
+  summarize avg(Temperature) by DeviceID, bin(Timestamp, 1h)
+- Filtering:
+  where Temperature > 50
+- Calculated column:
+  extend TempF = Temperature * 9/5 + 32
+- Column selection:
+  project DeviceID, TempF
+
+Scope / Usage
+- Azure Data Explorer / Kusto
+- Not for file ingestion; used after data is ingested
+
+Exam Traps
+- Using extend instead of summarize for aggregation
+- Forgetting bin() for time-series aggregation
+- Confusing project (select) with summarize (aggregate)
+
+====================================================================
+
+5) Multi-Tool Pipeline Guidance
+
+Pipeline Stages and Tools
+- Pre-load cleaning: Power Query
+- Heavy batch transformations: PySpark
+- Post-load deduplication and aggregation: SQL Pool
+- Telemetry / IoT batch analytics: KQL
+- Reporting only: Power BI
+
+Exam Trap
+- Always choose the correct tool for the correct stage
+
+====================================================================
+
+6) Visual Flow Summary
+
+Data Lake / CSV / Excel
+        |
+        v
+Power Query
+- Clean
+- Combine
+- Standardize
+        |
+        v
+PySpark Notebook
+- Large-scale aggregation
+- Complex transformations
+        |
+        v
+SQL Pool / Synapse
+- Deduplication
+- Final aggregations
+        |
+        v
+Power BI
+- Reporting only
+
+Optional IoT / Logs Flow
+
+IoT / Telemetry Logs
+        |
+        v
+KQL
+- summarize
+- bin
+- project
+        |
+        v
+Dashboards / Power BI
+
+====================================================================
+
+Exam Traps Quick List
+- Power Query: Merge vs Combine
+- PySpark: alias aggregation columns
+- SQL: Use ROW_NUMBER(), not DISTINCT
+- KQL: summarize + bin() for time-series
+- Know scope: Power Query (pre-load), PySpark (heavy batch), SQL (post-load), KQL (logs)
+
+====================================================================
+
+End of Cheat Sheet
