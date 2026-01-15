@@ -1,0 +1,149 @@
+DP-700 Cheat Sheet
+Handle Duplicate, Missing, and Late-Arriving Data
+(Microsoft Fabric – Batch Data Processing)
+
+====================================================================
+
+1) Duplicate Data
+
+Common Causes
+- Source system retries
+- File reprocessing
+- Event replays
+- Upserts from transactional systems
+
+Deduplication Techniques (Spark)
+
+Scenario: Remove any duplicate
+- Method: dropDuplicates()
+
+Scenario: Keep latest record
+- Method: Window function with row_number()
+
+Scenario: Update existing rows
+- Method: Delta MERGE INTO
+
+Best Practice: Keep Latest Record
+- Partition by business key (id)
+- Order by lastUpdated descending
+- Keep row_number = 1
+
+Avoid
+- Pandas-based deduplication
+- collect() to the driver
+
+====================================================================
+
+2) Missing Data (NULL Handling)
+
+Common Strategies
+
+Fill with average
+- Use for numeric metrics
+
+Fill with constant
+- Use for flags or defaults
+
+Drop rows
+- Only if business rules allow
+
+Leave NULL
+- When missing value is meaningful
+
+Exam Trap
+- “Always drop NULLs” is FALSE
+
+Handle missing data intentionally based on use case.
+
+====================================================================
+
+3) Late-Arriving Data
+
+Characteristics
+- Data arrives days or weeks late
+- Impacts historical aggregates
+- Common in batch ingestion pipelines
+
+Best Practices in Fabric
+- Partition tables by date
+- Reprocess only affected partitions
+- Use Delta Lake MERGE for upserts
+
+Delta MERGE Handles
+- Late-arriving data
+- Updates to existing rows
+- Deduplication
+
+====================================================================
+
+4) Delta Lake Features (Exam Critical)
+
+MERGE
+- Handles upserts and late data
+
+ACID Transactions
+- Ensures data consistency
+
+Time Travel
+- Enables recovery and debugging
+
+Schema Evolution
+- Supports changing source schemas
+
+====================================================================
+
+5) Partitioning Strategy
+
+Good Partition
+- Date column
+- Enables efficient reprocessing of late data
+
+Bad Partition
+- High-cardinality columns (IDs, GUIDs)
+
+Exam Note
+- Partitioning improves read performance
+- Does NOT reduce aggregation shuffle
+
+====================================================================
+
+6) Scope and Persistence
+
+DataFrame
+- Persistent: No
+- Shareable: No
+
+Temporary View
+- Persistent: No
+- Shareable: No
+
+Delta / Lakehouse Table
+- Persistent: Yes
+- Shareable: Yes
+
+Rule
+- Late-arriving data requires persistent storage
+
+====================================================================
+
+7) Common Exam Traps
+
+- Using Pandas for large batch datasets
+- Dropping NULLs without business logic
+- Using temporary views for late-arriving data
+- Ignoring late-arriving records
+- Assuming dropDuplicates() keeps the latest row
+
+====================================================================
+
+8) DP-700 Golden Rules
+
+- Latest record required -> Window function
+- Late-arriving data -> Delta MERGE
+- Scalable solution -> Spark + Delta
+- Reusable data -> Lakehouse table
+- Missing data -> Handle deliberately, not blindly
+
+====================================================================
+
+End of Cheat Sheet
