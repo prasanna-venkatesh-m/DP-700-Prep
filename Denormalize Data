@@ -1,0 +1,193 @@
+DP-700 Cheat Sheet
+Ingest & Transform Batch Data – Denormalize Data
+
+====================================================================
+
+1) Core Concept
+
+What is Denormalization?
+
+Denormalization is the process of flattening dimension attributes into a fact table during batch ingestion to:
+- Reduce joins at query time
+- Improve analytics performance
+- Simplify consumption (Power BI, SQL analytics)
+
+====================================================================
+
+2) When to Denormalize (Exam Critical)
+
+Use Denormalization When:
+- Batch ingestion (daily/hourly loads)
+- Read-heavy analytics workloads
+- Using Direct Lake
+- Large fact table with small dimension tables
+- Filters frequently use dimension attributes
+
+Avoid or Limit Denormalization When:
+- Dimensions change frequently
+- Tables become excessively wide
+- Storage cost and reprocessing overhead are high
+- Data is operational (OLTP-style)
+
+====================================================================
+
+3) Where Denormalization Happens (Scope)
+
+Spark Notebook
+- Supported: Yes
+- Best for large-scale joins
+
+Dataflow Gen2
+- Supported: Yes
+- Low-code batch transformations
+
+Lakehouse SQL Endpoint
+- Supported: Limited
+- Query-time joins only
+
+Power BI Semantic Model
+- Supported: No
+- Too late in the pipeline
+
+Eventstream
+- Supported: No
+- Streaming only
+
+Exam Rule:
+Denormalize BEFORE analytics consumption.
+
+====================================================================
+
+4) Spark Best Practices for Denormalization
+
+Join Optimization
+- Broadcast small dimension tables
+- Filter fact data BEFORE joins
+- Do NOT cache large fact tables
+- Do NOT join unused dimensions
+
+Data Processing
+- Select only required columns (avoid SELECT *)
+- Use incremental processing with watermark columns
+- Apply transformations early to reduce data volume
+
+====================================================================
+
+5) Storage & Output Format
+
+Delta
+- Required
+- Best choice for Fabric and Direct Lake
+
+Parquet
+- Acceptable
+
+CSV
+- Red flag in exam questions
+
+Why Delta?
+- ACID transactions
+- Schema enforcement
+- Time travel
+- Optimized for Direct Lake
+
+====================================================================
+
+6) Partitioning Guidelines
+
+Good Partition Columns
+- Date
+- IngestDate
+- Region (low or medium cardinality)
+
+Bad Partition Columns
+- CustomerId
+- TransactionId
+- GUIDs or high-cardinality columns
+
+Exam Trap:
+High-cardinality partitions reduce performance.
+
+====================================================================
+
+7) Incremental Denormalization
+
+Recommended Approach
+- Use LastUpdated or IngestDate columns
+- Process only new or changed data
+- Avoid full table reloads
+
+Common Techniques
+- Delta MERGE
+- Partition overwrite strategies
+
+====================================================================
+
+8) Direct Lake and Denormalization
+
+Why Denormalize for Direct Lake?
+- Fewer joins mean faster scans
+- Better DAX performance
+- Reduced query planning overhead
+
+Exam Bias:
+Direct Lake favors denormalized or lightly denormalized tables.
+
+====================================================================
+
+9) Common Exam Traps
+
+Normalize everything
+- Analytics systems are not OLTP
+
+Cache large fact tables
+- Causes memory pressure
+
+Use SQL views for ingestion
+- Leads to runtime joins
+
+Use SELECT *
+- Causes schema drift
+
+Over-denormalization
+- Increases reprocessing overhead
+
+====================================================================
+
+10) Quick Mental Checklist (Exam)
+
+Ask yourself:
+- Is this batch data? -> Denormalize
+- Is Direct Lake mentioned? -> Denormalize
+- Large fact + small dimensions? -> Broadcast join
+- Performance issue? -> Reduce joins
+- Incremental load? -> Watermark + Delta
+
+====================================================================
+
+Visual Summary
+
+[ Source Systems ]
+        |
+        v
+[ Batch Ingestion ]
+        |
+        v
+[ Spark / Dataflow Gen2 ]
+  - Filter early
+  - Broadcast dimensions
+  - Select required columns
+        |
+        v
+[ Denormalized Delta Table ]
+  - Partitioned
+  - Incremental
+        |
+        v
+[ Direct Lake / SQL / Power BI ]
+  - Fast scans
+  - Minimal joins
+
+====================================================================
+
+End of Cheat Sheet
