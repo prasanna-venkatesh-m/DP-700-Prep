@@ -1,0 +1,183 @@
+DP-700 Cheat Sheet
+Ingest and Transform Streaming Data
+
+====================================================================
+
+1) Choosing a Streaming Engine
+
+Key Streaming Engines
+
+Azure Stream Analytics (ASA)
+- Best for real-time analytics with minimal coding
+- Fully managed service
+- Integrates with Event Hub, IoT Hub, Blob storage
+- Limited for complex transformations or ML
+
+Azure Event Hubs
+- Used for event ingestion only
+- High throughput, low latency
+- Requires downstream processing engine
+
+Apache Spark Structured Streaming
+- Best for complex, large-scale streaming transformations
+- Supports batch + streaming, joins, windowing, ML
+- More setup and configuration required
+
+Exam Tip
+- Event Hub = ingestion only
+- ASA or Spark = processing and analytics
+
+Scope Note
+- ASA: Workspace or pipeline level
+- Spark Streaming: Notebook and cluster level
+
+====================================================================
+
+2) Real-Time Intelligence Storage Choices
+
+Native Storage
+- Default ingestion and query storage
+- Fast and simple
+- No redundancy mirroring
+
+Mirrored Storage
+- High availability and disaster recovery
+- Extra cost and slightly slower writes
+
+Shortcuts
+
+Accelerated Shortcut
+- Pre-computed data
+- Fastest query performance
+- Higher storage and compute cost
+
+Non-Accelerated Shortcut
+- Live query on external data
+- Slower performance
+- No pre-computation
+
+Exam Tip
+- Fastest query performance usually means native storage or accelerated shortcut
+
+====================================================================
+
+3) Processing Streaming Data
+
+EventStreams
+- Continuous ingestion from Event Hub or IoT Hub
+- Supports filtering, aggregation, and windowing
+- Connects to ASA, Spark Streaming, or KQL
+- Scope: Workspace or pipeline level
+
+Spark Structured Streaming
+- Supports micro-batch and continuous processing
+- Handles windowing, joins, aggregations
+- Scalable and flexible
+- Scope: Notebook and cluster level
+
+KQL (Kusto Query Language)
+- Used in Azure Data Explorer / Real-Time Analytics
+- Best for time-series and log analytics
+- Supports summarize, bin(), make-series
+- Less coding than Spark
+
+Exam Tip
+- KQL is best for time-based analytics
+- Spark is best for complex logic and ML
+
+====================================================================
+
+4) Windowing Functions (EXAM FAVORITE)
+
+Tumbling Window
+- Fixed-size, non-overlapping windows
+
+Hopping (Sliding) Window
+- Overlapping windows
+- Example: last 5 minutes every 1 minute
+
+Session Window
+- Based on inactivity gap
+- Used for user sessions
+
+Exam Trap
+- Tumbling windows do NOT overlap
+- Hopping windows DO overlap
+
+====================================================================
+
+5) Key Configurations and Settings
+
+Checkpointing
+- Required for fault tolerance
+- Enables exactly-once processing
+
+Watermarking
+- Handles late-arriving events
+- Defines how late data is accepted
+
+Input and Output Formats
+- Common formats: JSON, Avro, Parquet
+
+Parallelism
+- Spark partitions affect throughput and latency
+
+Retention
+- Event Hub retention controls how far back data can be replayed
+
+====================================================================
+
+6) Scope and Context
+
+Azure Stream Analytics Job
+- Scope: Workspace or pipeline
+- Fully managed streaming engine
+
+Spark Structured Streaming
+- Scope: Notebook and cluster
+- Maximum flexibility and control
+
+KQL
+- Scope: Database or table
+- Works with streaming or ingested data
+
+====================================================================
+
+7) Common Exam Traps
+
+- Event Hub does NOT process data, it only ingests
+- Shortcut does not mean data is fully ingested
+- Accelerated shortcut = faster queries
+- Tumbling vs hopping windows confusion
+- Forgetting checkpointing and watermarking for exactly-once semantics
+- Choosing Spark when simple ASA would suffice (and vice versa)
+
+====================================================================
+
+8) Visual Summary
+
+Event Sources
+(Event Hub / IoT Hub)
+          |
+          v
+Streaming Engine
+- Azure Stream Analytics
+- Spark Structured Streaming
+- KQL
+          |
+          v
+Storage / Output
+- Native Storage
+- Mirrored Storage
+- Accelerated Shortcut
+- Non-Accelerated Shortcut
+          |
+          v
+Real-Time Analytics
+- Windowing
+- Aggregations
+- Time-series queries
+
+====================================================================
+
+End of Cheat Sheet
