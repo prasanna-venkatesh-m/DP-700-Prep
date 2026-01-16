@@ -1,0 +1,186 @@
+DP-700 CHEAT SHEET
+Monitor & Optimize Analytics Solutions
+Identify & Resolve Errors
+==================================================
+
+1) PIPELINE ERRORS (DATA PIPELINES)
+
+Common Issues:
+- Schema mismatch between source and sink
+- Network or permission issues
+- Timeout or resource limits
+- Unsupported transformations
+
+Troubleshooting Steps:
+1. Check pipeline run logs to identify the failing activity.
+2. Compare source schema with sink schema.
+3. Validate pipeline parameters and variable values.
+4. Verify linked service connectivity and credentials.
+5. Enable and review diagnostic logging in Fabric.
+
+Key Configurations:
+- Auto-create table (only works for new tables, not existing ones)
+- Retry policies
+- Timeout settings
+- Incremental load vs full load
+
+Exam Traps:
+- Auto-create table does NOT fix schema mismatch on existing tables.
+- Pipeline failures may be caused by extra columns in the source, not destination limits.
+
+--------------------------------------------------
+
+2) DATAFLOW ERRORS (GEN2 DATAFLOWS)
+
+Common Issues:
+- Data type mismatches (especially datetime)
+- Null or invalid values
+- Schema drift misalignment
+- Large dataset refresh failures
+
+Troubleshooting Steps:
+1. Inspect Power Query applied steps to locate the failing transformation.
+2. Use Data Profiling to review column quality and distribution.
+3. Check schema drift configuration and disable if it causes conflicts.
+4. Validate incremental refresh configuration (if used).
+
+Exam Traps:
+- Incremental refresh does NOT fix data type errors.
+- Schema drift affects column mapping, not invalid values.
+- DP-700 frequently tests Data Profiling as the diagnostic tool.
+
+--------------------------------------------------
+
+3) NOTEBOOK ERRORS (SPARK / SQL / PYTHON)
+
+Common Issues:
+- Table or view not found
+- Incorrect kernel or language
+- Session caching issues
+- Permission issues
+
+Troubleshooting Steps:
+1. Restart notebook session if tables were recently created.
+2. Verify database and table names (case-sensitive).
+3. Check user permissions on Lakehouse or Warehouse.
+4. Ensure the kernel supports the query type (SQL vs PySpark).
+
+Exam Traps:
+- "Table not found" is most often a session cache issue, not permissions.
+- Fabric frequently requires a new session after table creation.
+
+--------------------------------------------------
+
+4) EVENTHOUSE ERRORS (KQL / FABRIC DATABASE)
+
+Common Issues:
+- Missing or delayed events
+- Query performance issues
+- Retention misconfiguration
+- Schema mismatches
+
+Troubleshooting Steps:
+1. Review ingestion batching policy.
+2. Verify Eventstream to Eventhouse output mapping.
+3. Confirm compute SKU for query performance.
+4. Check retention policy (affects historical data only).
+
+Exam Traps:
+- Missing data is usually ingestion or mapping related, not retention.
+- Compute SKU rarely causes ingestion failure.
+
+--------------------------------------------------
+
+5) EVENTSTREAM ERRORS
+
+Common Issues:
+- Data not reaching Eventhouse
+- Incorrect output mapping
+- Capacity paused or throttled
+- Destination schema mismatch
+
+Troubleshooting Steps:
+1. Check Eventstream status (Running, Stopped, Error).
+2. Validate output schema matches Eventhouse schema.
+3. Confirm Eventstream capacity and region.
+4. Check firewall or network access for external sources.
+
+Exam Traps:
+- Streams can be "Running" but produce no data due to mapping mismatch.
+- Retention and compute are rarely the first root cause.
+
+--------------------------------------------------
+
+6) T-SQL ERRORS (FABRIC WAREHOUSE)
+
+Common Issues:
+- GROUP BY and SELECT mismatch
+- Invalid syntax
+- Column does not exist
+- Data type incompatibility
+
+Troubleshooting Steps:
+1. Ensure all non-aggregated SELECT columns are included in GROUP BY.
+2. Validate correct use of aggregate functions (SUM, COUNT, AVG).
+3. Confirm column names and data types.
+4. Review joins for ambiguity.
+
+Exam Traps:
+- GROUP BY errors often require fixing both SELECT and GROUP BY.
+- SUM or aggregation mismatch is a common DP-700 trick.
+
+--------------------------------------------------
+
+7) SHORTCUT ERRORS (LAKEHOUSE EXTERNAL DATA)
+
+Common Issues:
+- Permission or firewall blocks
+- Incorrect path or nested folder structure
+- Unsupported file format
+- Read-only destination issues
+
+Troubleshooting Steps:
+1. Verify storage permissions (ADLS Gen2 or Blob Storage).
+2. Confirm shortcut path exists and is reachable.
+3. Ensure file format is supported (Parquet preferred).
+4. Test querying data through the shortcut.
+
+Exam Traps:
+- Shortcut creation can succeed but access fails due to firewall or permissions.
+- File format alone rarely causes access failure unless unsupported.
+
+--------------------------------------------------
+
+SCOPE NOTES
+
+- Pipelines: Workspace or pipeline level
+- Dataflows: Workspace or dataset level
+- Notebooks: Session level (sometimes workspace level)
+- Eventhouse: Database level
+- Eventstream: Stream level
+- T-SQL: Warehouse level
+- Shortcuts: Lakehouse level
+
+--------------------------------------------------
+
+EXAM TIPS & TRAPS
+
+1. Always check schema first (pipelines, dataflows, Eventstream, T-SQL).
+2. Notebook "table not found" usually means session restart is needed.
+3. Event ingestion issues: check mapping before retention or compute.
+4. GROUP BY errors often require multiple simultaneous fixes.
+5. Shortcut failures usually point to network or permission issues.
+6. Multi-select questions often include irrelevant distractors.
+
+--------------------------------------------------
+
+QUICK REFERENCE SUMMARY
+
+Pipeline: Schema mismatch -> Match source and sink schema
+Dataflow: Invalid column or type -> Inspect steps and profiling
+Notebook: Table not found -> Restart session and verify names
+Eventhouse: Missing events -> Check ingestion and mapping
+Eventstream: No data flow -> Validate mapping and capacity
+T-SQL: GROUP BY error -> Fix SELECT and GROUP BY together
+Shortcut: Access failure -> Check firewall and permissions
+==================================================
