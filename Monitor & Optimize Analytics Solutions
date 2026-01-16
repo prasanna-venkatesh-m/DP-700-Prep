@@ -1,0 +1,197 @@
+DP-700 CHEAT SHEET
+Monitor & Optimize Analytics Solutions (Microsoft Fabric)
+========================================================
+
+FOCUS AREAS:
+- Monitor Fabric items
+- Monitor data ingestion
+- Monitor data transformation
+- Monitor semantic model refresh
+- Configure alerts
+
+========================================================
+1) MONITORING IN MICROSOFT FABRIC – BIG PICTURE (EXAM CRITICAL)
+========================================================
+
+Monitoring Layers:
+
+Capacity (Tenant / SKU)
+|
+|-- Workspace
+|   |-- Dataflows
+|   |-- Notebooks
+|   |-- Pipelines
+|   |-- Lakehouses
+|   |-- Semantic Models
+|
+|-- Item-Level
+    |-- Refresh history
+    |-- Execution logs
+    |-- Spark jobs
+    |-- Table / partition refresh
+
+========================================================
+2) MONITOR DATA INGESTION
+========================================================
+
+Common Ingestion Tools:
+- Dataflows Gen2
+- Pipelines
+- Eventstreams
+- Notebooks (Spark ingestion)
+
+What to Monitor:
+- Refresh history (success does NOT equal freshness)
+- Duration trends (delays without failures)
+- Gateway status (on-prem sources)
+- Capacity usage (throttling, queueing)
+
+Key Monitoring Tools:
+- Dataflow run history
+- Pipeline run monitoring
+- Fabric Capacity Metrics App
+- Gateway monitoring (secondary)
+
+Exam Traps:
+- No failures does NOT mean ingestion is healthy
+- Delays usually indicate capacity contention
+- Semantic model alerts do NOT monitor ingestion
+
+========================================================
+3) MONITOR DATA TRANSFORMATION
+========================================================
+
+Dataflows Gen2:
+- Monitor applied step duration
+- Detect query folding breaks
+- Watch for timeouts
+
+Spark Notebooks (VERY EXAM-HEAVY):
+- Use Spark UI
+- Analyze:
+  - Stages
+  - Shuffles
+  - Data skew
+  - Executor memory
+
+Optimization Levers:
+- Partition sizing
+- File size (avoid many small files)
+- Caching
+- Broadcast joins
+
+Key Metrics:
+- CPU / Memory -> Capacity Metrics App
+- Job duration -> Notebook / Spark UI
+- Concurrency -> Capacity Metrics App
+
+Exam Traps:
+- Dataflow monitoring does NOT replace Spark monitoring
+- Semantic model tools do NOT optimize transformations
+
+========================================================
+4) MONITOR SEMANTIC MODEL REFRESH
+========================================================
+
+Refresh Types:
+- Full refresh
+- Incremental refresh
+- On-demand refresh
+- Scheduled refresh
+
+What to Monitor:
+- Refresh history (detect failures)
+- Table-level refresh results
+- Partition filters (incremental refresh issues)
+- Data freshness vs business SLAs
+
+Common Issues:
+- Refresh succeeds but data is stale
+- Incremental refresh policy misconfigured
+- Partition filters too restrictive
+
+Exam Traps:
+- "Succeeded" does NOT guarantee correct data
+- Increasing capacity rarely fixes logic issues
+
+========================================================
+5) CONFIGURE ALERTS (HIGH-RISK EXAM AREA)
+========================================================
+
+Supported Alerting in Fabric:
+
+- Refresh failure alerts: SUPPORTED
+- Data-driven alerts (dashboard tiles): SUPPORTED
+- Azure Monitor alerts: NOT supported
+- Log Analytics alerts: NOT supported
+- Semantic model email alerts: NOT supported
+
+What You CAN Alert On:
+- Dataset / semantic model refresh failures
+- Data threshold breaches via dashboard tiles
+- Dataset not refreshed (indirect inference)
+
+Exam Traps:
+- Fabric alerting is NOT Azure Monitor
+- Alerts require dashboards, NOT reports
+- No native alert for "late ingestion"
+
+========================================================
+6) MONITORING SCOPE (MEMORIZE)
+========================================================
+
+Capacity Scope:
+- CU usage
+- Throttling
+- Cross-workspace contention
+- Workload distribution
+
+Workspace Scope:
+- Item inventory
+- Run history
+- Ownership and permissions
+
+Item Scope:
+- Refresh status
+- Execution logs
+- Spark job details
+- Table / partition refresh
+
+========================================================
+7) OPTIMIZATION STRATEGY (EXAM-FRIENDLY)
+========================================================
+
+When Performance Is Poor:
+1. Check Capacity Metrics first
+2. Identify workload causing contention
+3. Optimize:
+   - Spark jobs
+   - Dataflows
+   - Refresh schedules
+4. Scale capacity LAST
+
+========================================================
+8) VISUAL SUMMARY (QUICK REVISION)
+========================================================
+
+Ingestion --> Transformation --> Semantic Model --> Reports
+   |                |                  |
+   |                |                  |
+Dataflows        Spark UI         Refresh History
+Pipelines        Partitions       Incremental Policy
+Gateway          File Sizes       Data Alerts
+   |
+   +---- Capacity Metrics (CU usage / throttling)
+
+========================================================
+9) FINAL EXAM TIPS
+========================================================
+
+- Capacity metrics explain most unexplained issues
+- Incremental refresh is the most common failure point
+- Alerting is limited and opinionated
+- Always map the problem to the correct monitoring layer
+
+========================================================
+END OF CHEAT SHEET
+========================================================
